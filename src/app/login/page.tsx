@@ -29,7 +29,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(20,20,20,0.9), rgba(50,50,50,0.9)) url(/images/abstract-bg.jpg) center/cover no-repeat' }}>
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Admin Login</h2>
         

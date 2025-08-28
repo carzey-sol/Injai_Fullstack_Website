@@ -11,7 +11,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/admin');
+      router.push('/login');
     }
   }, [user, loading, router]);
 
@@ -26,13 +26,14 @@ export default function AdminDashboardPage() {
   return (
     <div style={{ paddingTop: '10px', minHeight: '100vh' }}>
       <div className="container">
-        <div style={{ background: 'white', padding: '2rem', borderRadius: '10px', boxShadow: 'var(--shadow)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div>
-            <h1 style={{ color: 'var(--primary-color)', marginBottom: '0.25rem' }}>Welcome, {user.username}</h1>
-            <p style={{ color: 'var(--dark-gray)' }}>Manage your content and settings</p>
-          </div>
-          <div style={{ marginLeft: 'auto' }}>
-            <img src="/images/admin-welcome.png" alt="Welcome" style={{ width: 120, height: 'auto' }} />
+        <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', marginBottom: '1.5rem', boxShadow: 'var(--shadow)', background: 'white' }}>
+          <div style={{ width: '100%', height: 280, backgroundImage: 'url(/image.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem' }}>
+            <img src="https://api.dicebear.com/7.x/shapes/png?seed=admin" alt="Channel Avatar" style={{ width: 64, height: 64, borderRadius: '50%', marginTop: -32, border: '3px solid white', background: '#fff' }} />
+            <div>
+              <h1 style={{ margin: 0, fontSize: 22 }}>Welcome, {user.username}</h1>
+              <a href="https://www.youtube.com/channel/UCeWC0W87iAjh-qjKE7WA_xA" target="_blank" rel="noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>Visit our YouTube channel</a>
+            </div>
           </div>
         </div>
 

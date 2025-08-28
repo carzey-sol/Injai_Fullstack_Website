@@ -7,19 +7,28 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { email, username, password } = await request.json();
 
     // Validate input
-    if (!email || !password) {
+    if ((!email && !username) || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Email or username and password are required' },
         { status: 400 }
       );
     }
 
     // Normalize and find user by email
-    const normalizedEmail = String(email).trim().toLowerCase();
-    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    const normalizedEmail = email ? String(email).trim().toLowerCase() : undefined;
+    const normalizedUsername = username ? String(username).trim() : undefined;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          normalizedEmail ? { email: normalizedEmail } : undefined,
+          normalizedUsername ? { username: normalizedUsername } : undefined,
+        ].filter(Boolean) as any,
+      },
+    });
 
     if (!user) {
       return NextResponse.json(

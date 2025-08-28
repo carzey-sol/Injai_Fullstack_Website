@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,8 +12,22 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const artist = searchParams.get('artist');
 
-    const take = limit ? parseInt(limit) : undefined;
+    // Build query
+    const query: any = {};
+    
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+    
+    if (featured === 'true') {
+      query.featured = true;
+    }
 
+    if (artist) {
+      query.artist = artist;
+    }
+
+    const take = limit ? parseInt(limit) : undefined;
     const videos = await prisma.video.findMany({
       where: {
         category: category && category !== 'all' ? category : undefined,
@@ -22,6 +39,7 @@ export async function GET(request: NextRequest) {
       include: { artist: true },
     });
 
+    // Include both legacy fields used by components and enriched fields
     const transformedVideos = videos.map((video: any) => ({
       id: video.id,
       _id: video.id,
@@ -31,7 +49,7 @@ export async function GET(request: NextRequest) {
       youtubeId: video.youtubeId,
       category: video.category,
       year: new Date(video.uploadDate).getFullYear().toString(),
-      duration: '3:25', // Placeholder
+      duration: '3:25', // Placeholder - you could add this to the model
       views: video.views ? `${video.views.toLocaleString()}+ views` : 'Unknown views',
       uploadDate: video.uploadDate,
       thumbnail: video.thumbnail,
@@ -51,14 +69,31 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const videoData = await request.json();
 
-    const createdVideo = await prisma.video.create({
-      data: videoData,
+    const created = await prisma.video.create({
+      data: {
+        title: videoData.title,
+        description: videoData.description,
+        youtubeId: videoData.youtubeId,
+        category: videoData.category,
+        uploadDate: videoData.uploadDate ? new Date(videoData.uploadDate) : new Date(),
+        thumbnail: videoData.thumbnail,
+        featured: !!videoData.featured,
+        views: typeof videoData.views === 'number' ? videoData.views : 0,
+        artistId: videoData.artistId || videoData.artist?._id || videoData.artist?.id || null,
+      }
     });
 
     return NextResponse.json(
-      { message: 'Video created successfully', video: createdVideo },
+      { message: 'Video created successfully', video: created },
       { status: 201 }
     );
 
@@ -69,4 +104,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+} 

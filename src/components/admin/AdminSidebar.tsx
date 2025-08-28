@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const { logout } = useAuth();
   const link = (href: string, label: string, icon: string) => (
     <li>
       <Link href={href} className={`nav-link ${pathname === href ? 'active' : ''}`}>
@@ -34,6 +36,12 @@ export default function AdminSidebar() {
           {link('/admin/videos', 'Videos', 'fas fa-video')}
           {link('/admin/events', 'Events', 'fas fa-calendar')}
           {link('/admin/settings', 'Settings', 'fas fa-cog')}
+          <li>
+            <button onClick={logout} className="nav-link" style={{ background: 'transparent', border: 0, color: 'inherit', textAlign: 'left', padding: 0, cursor: 'pointer' }}>
+              <i className="fas fa-sign-out-alt" style={{ marginRight: 8 }}></i>
+              Logout
+            </button>
+          </li>
         </ul>
       </nav>
     </aside>

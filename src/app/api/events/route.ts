@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,25 +12,35 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const type = searchParams.get('type');
 
-    // Build query filters
-    const where: any = {};
-    if (status && status !== 'all') where.status = status;
-    if (featured === 'true') where.featured = true;
-    if (type && type !== 'all') where.type = type;
+    // Build query
+    const query: any = {};
+    
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+    
+    if (featured === 'true') {
+      query.featured = true;
+    }
 
-    // Limit results
+    if (type && type !== 'all') {
+      query.type = type;
+    }
+
     const take = limit ? parseInt(limit) : undefined;
-
     const events = await prisma.event.findMany({
-      where,
+      where: {
+        status: status && status !== 'all' ? status : undefined,
+        featured: featured === 'true' ? true : undefined,
+        type: type && type !== 'all' ? type : undefined,
+      },
       orderBy: { date: 'asc' },
       take,
     });
 
-    // Transform data if needed
     const transformed = events.map((e: any) => ({
-      id: e.id || e._id,
-      _id: e._id || e.id,
+      id: e.id,
+      _id: e.id,
       title: e.title,
       description: e.description,
       date: e.date,
@@ -39,30 +52,54 @@ export async function GET(request: NextRequest) {
       ticketPrice: e.ticketPrice,
       ticketUrl: e.ticketUrl,
       capacity: e.capacity,
-      lineup: Array.isArray(e.lineup)
-        ? e.lineup.map((a: any) => ({ id: a._id || a.id, name: a.name }))
-        : [],
+      lineup: Array.isArray(e.lineup) ? e.lineup.map((a: any) => ({ id: a.id, name: a.name })) : []
     }));
 
     return NextResponse.json(transformed);
+
   } catch (error: any) {
     console.error('Error fetching events:', error);
-    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch events' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const eventData = await request.json();
 
-    const created = await prisma.event.create({ data: eventData });
+    const created = await prisma.event.create({
+      data: {
+        title: eventData.title,
+        description: eventData.description,
+        date: eventData.date ? new Date(eventData.date) : new Date(),
+        location: eventData.location,
+        type: eventData.type,
+        status: eventData.status,
+        image: eventData.image,
+        featured: !!eventData.featured,
+        ticketPrice: eventData.ticketPrice ?? null,
+        ticketUrl: eventData.ticketUrl ?? null,
+        capacity: eventData.capacity ?? null,
+        lineup: Array.isArray(eventData.lineup) ? eventData.lineup : [],
+      }
+    });
+    return NextResponse.json({ message: 'Event created successfully', event: created }, { status: 201 });
 
-    return NextResponse.json(
-      { message: 'Event created successfully', event: created },
-      { status: 201 }
-    );
   } catch (error: any) {
     console.error('Error creating event:', error);
-    return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create event' },
+      { status: 500 }
+    );
   }
-}
+} 
