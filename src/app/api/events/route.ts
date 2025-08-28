@@ -9,36 +9,25 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const type = searchParams.get('type');
 
-    // Build query
-    const query: any = {};
-    
-    if (status && status !== 'all') {
-      query.status = status;
-    }
-    
-    if (featured === 'true') {
-      query.featured = true;
-    }
+    // Build query filters
+    const where: any = {};
+    if (status && status !== 'all') where.status = status;
+    if (featured === 'true') where.featured = true;
+    if (type && type !== 'all') where.type = type;
 
-    if (type && type !== 'all') {
-      query.type = type;
-    }
-
-    // Build options
+    // Limit results
     const take = limit ? parseInt(limit) : undefined;
+
     const events = await prisma.event.findMany({
-      where: {
-        status: status && status !== 'all' ? status : undefined,
-        featured: featured === 'true' ? true : undefined,
-        type: type && type !== 'all' ? type : undefined,
-      },
+      where,
       orderBy: { date: 'asc' },
       take,
     });
 
+    // Transform data if needed
     const transformed = events.map((e: any) => ({
-      id: e._id,
-      _id: e._id,
+      id: e.id || e._id,
+      _id: e._id || e.id,
       title: e.title,
       description: e.description,
       date: e.date,
@@ -50,34 +39,30 @@ export async function GET(request: NextRequest) {
       ticketPrice: e.ticketPrice,
       ticketUrl: e.ticketUrl,
       capacity: e.capacity,
-      lineup: Array.isArray(e.lineup) ? e.lineup.map((a: any) => ({ id: a._id, name: a.name })) : []
+      lineup: Array.isArray(e.lineup)
+        ? e.lineup.map((a: any) => ({ id: a._id || a.id, name: a.name }))
+        : [],
     }));
 
     return NextResponse.json(transformed);
-
   } catch (error: any) {
     console.error('Error fetching events:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch events' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
-
     const eventData = await request.json();
 
     const created = await prisma.event.create({ data: eventData });
-    return NextResponse.json({ message: 'Event created successfully', event: created }, { status: 201 });
 
+    return NextResponse.json(
+      { message: 'Event created successfully', event: created },
+      { status: 201 }
+    );
   } catch (error: any) {
     console.error('Error creating event:', error);
-    return NextResponse.json(
-      { error: 'Failed to create event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
   }
-} 
+}
