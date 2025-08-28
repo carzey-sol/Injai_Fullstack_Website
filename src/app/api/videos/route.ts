@@ -9,32 +9,8 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const artist = searchParams.get('artist');
 
-    // Build query
-    const query: any = {};
-    
-    if (category && category !== 'all') {
-      query.category = category;
-    }
-    
-    if (featured === 'true') {
-      query.featured = true;
-    }
-
-    if (artist) {
-      query.artist = artist;
-    }
-
-    // Build options
-    const options: any = {
-      sort: { uploadDate: -1 },
-      populate: 'artist'
-    };
-
-    if (limit) {
-      options.limit = parseInt(limit);
-    }
-
     const take = limit ? parseInt(limit) : undefined;
+
     const videos = await prisma.video.findMany({
       where: {
         category: category && category !== 'all' ? category : undefined,
@@ -46,7 +22,6 @@ export async function GET(request: NextRequest) {
       include: { artist: true },
     });
 
-    // Include both legacy fields used by components and enriched fields
     const transformedVideos = videos.map((video: any) => ({
       id: video.id,
       _id: video.id,
@@ -56,7 +31,7 @@ export async function GET(request: NextRequest) {
       youtubeId: video.youtubeId,
       category: video.category,
       year: new Date(video.uploadDate).getFullYear().toString(),
-      duration: '3:25', // Placeholder - you could add this to the model
+      duration: '3:25', // Placeholder
       views: video.views ? `${video.views.toLocaleString()}+ views` : 'Unknown views',
       uploadDate: video.uploadDate,
       thumbnail: video.thumbnail,
@@ -76,15 +51,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
-
     const videoData = await request.json();
 
-    const video = new Video(videoData);
-    await video.save();
+    const createdVideo = await prisma.video.create({
+      data: videoData,
+    });
 
     return NextResponse.json(
-      { message: 'Video created successfully', video },
+      { message: 'Video created successfully', video: createdVideo },
       { status: 201 }
     );
 
@@ -95,4 +69,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}
