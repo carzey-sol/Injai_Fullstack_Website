@@ -98,8 +98,8 @@ export default function ContactPage() {
       {/* Contact Content */}
       <section className="contact-page">
         <div className="container">
-          <div className="contact-content">
-            <div className="contact-info">
+          <div className="contact-content" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '2rem' }}>
+            <div className="contact-info" style={{ minWidth: 0 }}>
               <h2>Get in Touch</h2>
               <p>{getInTouch.description || 'Have questions, suggestions, or want to collaborate? We\'d love to hear from you. Reach out to us through any of the channels below.'}</p>
               

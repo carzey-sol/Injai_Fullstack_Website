@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+interface PlaylistItem { title: string; thumbnail: string; youtubeId: string }
+interface FeaturedPlaylist { title?: string; description?: string; playlistUrl?: string; items?: PlaylistItem[] }
+
 interface Video {
   id: string;
   title: string;
@@ -24,9 +27,11 @@ export default function VideosPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [yearFilter, setYearFilter] = useState('all');
   const [artistFilter, setArtistFilter] = useState('all');
+  const [featuredPlaylist, setFeaturedPlaylist] = useState<FeaturedPlaylist | null>(null);
 
   useEffect(() => {
     fetchVideos();
+    fetchSettings();
   }, []);
 
   useEffect(() => {
@@ -76,6 +81,15 @@ export default function VideosPage() {
     }
 
     setFilteredVideos(filtered);
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      if (!res.ok) return;
+      const data = await res.json();
+      setFeaturedPlaylist(data?.featuredPlaylist || null);
+    } catch {}
   };
 
   if (loading) {
@@ -216,45 +230,32 @@ export default function VideosPage() {
       </section>
 
       {/* Featured Playlist */}
-      <section className="featured-playlist">
-        <div className="container">
-          <h2 className="section-title">Featured Playlist</h2>
-          <div className="playlist-content">
-            <div className="playlist-info">
-              <h3>Best of Guigui Rap 2024</h3>
-              <p>Curated collection of the hottest tracks and performances from the Guigui rap scene this year.</p>
-              <div className="playlist-stats">
-                <span>25 videos</span>
-                <span>•</span>
-                <span>2 hours 15 min</span>
-                <span>•</span>
-                <span>Updated weekly</span>
+      {featuredPlaylist && (featuredPlaylist.title || (featuredPlaylist.items||[]).length>0) && (
+        <section className="featured-playlist">
+          <div className="container">
+            <h2 className="section-title">Featured Playlist</h2>
+            <div className="playlist-content">
+              <div className="playlist-info">
+                <h3>{featuredPlaylist.title || 'Featured Playlist'}</h3>
+                {featuredPlaylist.description && <p>{featuredPlaylist.description}</p>}
+                {featuredPlaylist.playlistUrl && (
+                  <Link href={featuredPlaylist.playlistUrl} className="btn btn-primary" target="_blank">Watch Playlist</Link>
+                )}
               </div>
-              <Link href="#" className="btn btn-primary">Watch Playlist</Link>
-            </div>
-            <div className="playlist-preview">
-              <div className="playlist-videos">
-                <div className="playlist-video">
-                  <img src="/images/playlist1.jpg" alt="Playlist Video" />
-                  <span className="video-number">1</span>
-                </div>
-                <div className="playlist-video">
-                  <img src="/images/playlist2.jpg" alt="Playlist Video" />
-                  <span className="video-number">2</span>
-                </div>
-                <div className="playlist-video">
-                  <img src="/images/playlist3.jpg" alt="Playlist Video" />
-                  <span className="video-number">3</span>
-                </div>
-                <div className="playlist-video">
-                  <img src="/images/playlist4.jpg" alt="Playlist Video" />
-                  <span className="video-number">4</span>
+              <div className="playlist-preview">
+                <div className="playlist-videos">
+                  {(featuredPlaylist.items||[]).slice(0,4).map((item, idx) => (
+                    <div className="playlist-video" key={idx}>
+                      <img src={item.thumbnail} alt={item.title} />
+                      <span className="video-number">{idx+1}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 } 

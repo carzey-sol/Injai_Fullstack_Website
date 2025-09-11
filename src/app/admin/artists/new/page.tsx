@@ -70,7 +70,7 @@ export default function NewArtistPage() {
           <div className="form-row">
             <div className="form-group">
               <ImageUpload
-                onImageUpload={setImage}
+                onImageUpload={(url)=>{ setImage(url); setThumbnail(url); }}
                 currentImage={image}
                 folder="artists/main"
                 label="Artist Image"
@@ -78,7 +78,7 @@ export default function NewArtistPage() {
             </div>
             <div className="form-group">
               <ImageUpload
-                onImageUpload={setThumbnail}
+                onImageUpload={(url)=>{ setThumbnail(url); setImage(url); }}
                 currentImage={thumbnail}
                 folder="artists/thumbnails"
                 label="Thumbnail Image"

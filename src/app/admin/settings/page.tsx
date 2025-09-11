@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import ImageUpload from '@/components/ImageUpload';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -13,6 +14,7 @@ export default function SettingsPage() {
 
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
+  const [featuredPlaylist, setFeaturedPlaylist] = useState<any>({ title: '', description: '', playlistUrl: '', items: [] as { title: string; thumbnail: string; youtubeId: string }[] });
   const [headline, setHeadline] = useState('');
   const [description, setDescription] = useState('');
   const [email, setEmail] = useState('');
@@ -43,6 +45,7 @@ export default function SettingsPage() {
       const data = await res.json();
       setSocialLinks(data?.socialLinks || []);
       setTeam(data?.team || []);
+      setFeaturedPlaylist(data?.featuredPlaylist || { title: '', description: '', playlistUrl: '', items: [] });
       setHeadline(data?.getInTouch?.headline || '');
       setDescription(data?.getInTouch?.description || '');
       setEmail(data?.getInTouch?.email || '');
@@ -55,7 +58,7 @@ export default function SettingsPage() {
   const save = async () => {
     setSaving(true); setMessage('');
     try {
-      const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ socialLinks, team, getInTouch: { headline, description, email, phone, addressLines } }) });
+      const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ socialLinks, team, featuredPlaylist, getInTouch: { headline, description, email, phone, addressLines } }) });
       if (!res.ok) throw new Error('Failed to save');
       setMessage('Saved successfully');
     } catch (e: any) {
@@ -68,6 +71,49 @@ export default function SettingsPage() {
   return (
     <div className="container" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
       <h1 className="page-title">Site Settings</h1>
+      <section style={{ marginTop: '2rem', background: 'white', padding: '1.5rem', borderRadius: 10, boxShadow: 'var(--shadow)' }}>
+        <h2>Featured Playlist</h2>
+        <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="form-group">
+            <label>Title</label>
+            <input value={featuredPlaylist.title} onChange={(e)=> setFeaturedPlaylist({ ...featuredPlaylist, title: e.target.value })} />
+          </div>
+          <div className="form-group">
+            <label>Playlist URL (YouTube)</label>
+            <input value={featuredPlaylist.playlistUrl} onChange={(e)=> setFeaturedPlaylist({ ...featuredPlaylist, playlistUrl: e.target.value })} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label>Description</label>
+          <textarea rows={3} value={featuredPlaylist.description} onChange={(e)=> setFeaturedPlaylist({ ...featuredPlaylist, description: e.target.value })} />
+        </div>
+        <h3>Preview Items (optional)</h3>
+        {(featuredPlaylist.items || []).map((item: any, idx: number) => (
+          <div key={idx} className="form-row" style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr auto', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <input placeholder="Title" value={item.title} onChange={(e)=>{
+              const next = { ...featuredPlaylist };
+              next.items[idx] = { ...next.items[idx], title: e.target.value };
+              setFeaturedPlaylist(next);
+            }} />
+            <input placeholder="Thumbnail URL" value={item.thumbnail} onChange={(e)=>{
+              const next = { ...featuredPlaylist };
+              next.items[idx] = { ...next.items[idx], thumbnail: e.target.value };
+              setFeaturedPlaylist(next);
+            }} />
+            <input placeholder="YouTube ID" value={item.youtubeId} onChange={(e)=>{
+              const next = { ...featuredPlaylist };
+              next.items[idx] = { ...next.items[idx], youtubeId: e.target.value };
+              setFeaturedPlaylist(next);
+            }} />
+            <button className="btn btn-small btn-outline" onClick={()=>{
+              const next = { ...featuredPlaylist };
+              next.items = next.items.filter((_: any, i: number)=> i!==idx);
+              setFeaturedPlaylist(next);
+            }}>Remove</button>
+          </div>
+        ))}
+        <button className="btn btn-outline" onClick={()=> setFeaturedPlaylist({ ...featuredPlaylist, items: [...(featuredPlaylist.items||[]), { title: '', thumbnail: '', youtubeId: '' }] })}>Add Playlist Item</button>
+      </section>
 
       <section style={{ marginTop: '2rem', background: 'white', padding: '1.5rem', borderRadius: 10, boxShadow: 'var(--shadow)' }}>
         <h2>Social Links</h2>
@@ -104,7 +150,14 @@ export default function SettingsPage() {
           <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr 2fr auto', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <input placeholder="Name" value={member.name} onChange={(e)=>{ const n=[...team]; n[idx]={...n[idx], name:e.target.value}; setTeam(n); }} />
             <input placeholder="Role" value={member.role} onChange={(e)=>{ const n=[...team]; n[idx]={...n[idx], role:e.target.value}; setTeam(n); }} />
-            <input placeholder="Image URL" value={member.image || ''} onChange={(e)=>{ const n=[...team]; n[idx]={...n[idx], image:e.target.value}; setTeam(n); }} />
+            <div>
+              <ImageUpload
+                label="Photo"
+                folder="team"
+                currentImage={member.image}
+                onImageUpload={(url)=>{ const n=[...team]; n[idx]={...n[idx], image:url}; setTeam(n); }}
+              />
+            </div>
             <input placeholder="Bio" value={member.bio || ''} onChange={(e)=>{ const n=[...team]; n[idx]={...n[idx], bio:e.target.value}; setTeam(n); }} />
             <button className="btn btn-small btn-outline" onClick={() => setTeam(team.filter((_,i)=>i!==idx))}>Remove</button>
           </div>

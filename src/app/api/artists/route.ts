@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       artists.map((a) => ({
         id: a.id,
+        _id: a.id,
         name: a.name,
         bio: a.bio,
         category: a.category,
@@ -71,13 +72,14 @@ export async function POST(request: NextRequest) {
 
     const artistData = await request.json();
 
+    // Ensure thumbnail mirrors image if not provided
     const created = await prisma.artist.create({
       data: {
         name: artistData.name,
         bio: artistData.bio,
         category: artistData.category,
         image: artistData.image,
-        thumbnail: artistData.thumbnail,
+        thumbnail: artistData.thumbnail || artistData.image,
         yearsActive: artistData.stats?.yearsActive ?? 0,
         tracksReleased: artistData.stats?.tracksReleased ?? 0,
         streams: artistData.stats?.streams ?? 0,
@@ -128,7 +130,7 @@ export async function PUT(request: NextRequest) {
         bio: artistData.bio,
         category: artistData.category,
         image: artistData.image,
-        thumbnail: artistData.thumbnail,
+        thumbnail: artistData.thumbnail || artistData.image,
         yearsActive: artistData.stats?.yearsActive ?? 0,
         tracksReleased: artistData.stats?.tracksReleased ?? 0,
         streams: artistData.stats?.streams ?? 0,

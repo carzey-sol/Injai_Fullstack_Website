@@ -10,7 +10,7 @@ export const revalidate = 0;
 export async function GET() {
   try {
     const settings = await prisma.siteSettings.findFirst();
-    return NextResponse.json(settings || { socialLinks: [], team: [], getInTouch: {} });
+    return NextResponse.json(settings || { socialLinks: [], team: [], getInTouch: {}, featuredPlaylist: {} });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
   }
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const existing = await prisma.siteSettings.findFirst();
     const saved = existing
-      ? await prisma.siteSettings.update({ where: { id: existing.id }, data: { socialLinks: body.socialLinks ?? [], team: body.team ?? [], getInTouch: body.getInTouch ?? {} } })
-      : await prisma.siteSettings.create({ data: { socialLinks: body.socialLinks ?? [], team: body.team ?? [], getInTouch: body.getInTouch ?? {} } });
+      ? await prisma.siteSettings.update({ where: { id: existing.id }, data: { socialLinks: body.socialLinks ?? [], team: body.team ?? [], getInTouch: body.getInTouch ?? {}, featuredPlaylist: body.featuredPlaylist ?? {} } })
+      : await prisma.siteSettings.create({ data: { socialLinks: body.socialLinks ?? [], team: body.team ?? [], getInTouch: body.getInTouch ?? {}, featuredPlaylist: body.featuredPlaylist ?? {} } });
     return NextResponse.json({ message: 'Settings saved', settings: saved });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to save settings' }, { status: 500 });

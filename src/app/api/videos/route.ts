@@ -81,16 +81,30 @@ export async function POST(request: NextRequest) {
 
     const videoData = await request.json();
 
+    // Auto metadata: if not provided, try to fetch from YouTube oEmbed
+    let resolvedThumbnail = videoData.thumbnail;
+    let resolvedUploadDate = videoData.uploadDate;
+    let resolvedViews = videoData.views;
+    try {
+      if (!resolvedThumbnail || !resolvedUploadDate) {
+        const oembedRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoData.youtubeId}&format=json`);
+        if (oembedRes.ok) {
+          const ojson: any = await oembedRes.json();
+          resolvedThumbnail = resolvedThumbnail || ojson?.thumbnail_url;
+        }
+      }
+    } catch {}
+
     const created = await prisma.video.create({
       data: {
         title: videoData.title,
         description: videoData.description,
         youtubeId: videoData.youtubeId,
         category: videoData.category,
-        uploadDate: videoData.uploadDate ? new Date(videoData.uploadDate) : new Date(),
-        thumbnail: videoData.thumbnail,
+        uploadDate: resolvedUploadDate ? new Date(resolvedUploadDate) : new Date(),
+        thumbnail: resolvedThumbnail,
         featured: !!videoData.featured,
-        views: typeof videoData.views === 'number' ? videoData.views : 0,
+        views: typeof resolvedViews === 'number' ? resolvedViews : 0,
         artistId: videoData.artistId || videoData.artist?._id || videoData.artist?.id || null,
       }
     });
@@ -121,6 +135,18 @@ export async function PUT(request: NextRequest) {
 
     const { id, ...videoData } = await request.json();
 
+    // Auto metadata update for thumbnail if missing
+    let resolvedThumbnail = videoData.thumbnail;
+    try {
+      if (!resolvedThumbnail) {
+        const oembedRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoData.youtubeId}&format=json`);
+        if (oembedRes.ok) {
+          const ojson: any = await oembedRes.json();
+          resolvedThumbnail = ojson?.thumbnail_url;
+        }
+      }
+    } catch {}
+
     if (!id) {
       return NextResponse.json({ error: 'Video ID is required' }, { status: 400 });
     }
@@ -133,7 +159,7 @@ export async function PUT(request: NextRequest) {
         youtubeId: videoData.youtubeId,
         category: videoData.category,
         uploadDate: videoData.uploadDate ? new Date(videoData.uploadDate) : new Date(),
-        thumbnail: videoData.thumbnail,
+        thumbnail: resolvedThumbnail,
         featured: !!videoData.featured,
         views: typeof videoData.views === 'number' ? videoData.views : 0,
         artistId: videoData.artistId || videoData.artist?._id || videoData.artist?.id || null,

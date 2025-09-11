@@ -213,7 +213,7 @@ export default function AdminArtistsPage() {
             <div className="form-row">
               <div className="form-group">
                 <ImageUpload
-                  onImageUpload={(url) => setFormData({ ...formData, image: url })}
+                  onImageUpload={(url) => setFormData({ ...formData, image: url, thumbnail: url })}
                   currentImage={formData.image}
                   folder="artists/main"
                   label="Artist Image"
@@ -221,7 +221,7 @@ export default function AdminArtistsPage() {
               </div>
               <div className="form-group">
                 <ImageUpload
-                  onImageUpload={(url) => setFormData({ ...formData, thumbnail: url })}
+                  onImageUpload={(url) => setFormData({ ...formData, thumbnail: url, image: url })}
                   currentImage={formData.thumbnail}
                   folder="artists/thumbnails"
                   label="Thumbnail Image"
