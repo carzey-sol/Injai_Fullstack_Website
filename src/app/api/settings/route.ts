@@ -27,9 +27,25 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const existing = await prisma.siteSettings.findFirst();
+
+    // Build partial update object, merging nested JSON where needed
+    const updateData: any = {};
+    if (body.socialLinks !== undefined) updateData.socialLinks = body.socialLinks;
+    if (body.team !== undefined) updateData.team = body.team;
+    if (body.featuredPlaylist !== undefined) updateData.featuredPlaylist = body.featuredPlaylist;
+    if (body.getInTouch !== undefined) {
+      const currentGetInTouch = existing?.getInTouch || {};
+      updateData.getInTouch = { ...currentGetInTouch, ...body.getInTouch };
+    }
+
     const saved = existing
-      ? await prisma.siteSettings.update({ where: { id: existing.id }, data: { socialLinks: body.socialLinks ?? [], team: body.team ?? [], getInTouch: body.getInTouch ?? {}, featuredPlaylist: body.featuredPlaylist ?? {} } })
-      : await prisma.siteSettings.create({ data: { socialLinks: body.socialLinks ?? [], team: body.team ?? [], getInTouch: body.getInTouch ?? {}, featuredPlaylist: body.featuredPlaylist ?? {} } });
+      ? await prisma.siteSettings.update({ where: { id: existing.id }, data: updateData })
+      : await prisma.siteSettings.create({ data: {
+          socialLinks: body.socialLinks ?? [],
+          team: body.team ?? [],
+          featuredPlaylist: body.featuredPlaylist ?? {},
+          getInTouch: body.getInTouch ?? {},
+        }});
     return NextResponse.json({ message: 'Settings saved', settings: saved });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to save settings' }, { status: 500 });

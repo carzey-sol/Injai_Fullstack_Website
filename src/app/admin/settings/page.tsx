@@ -66,6 +66,42 @@ export default function SettingsPage() {
     } finally { setSaving(false); }
   };
 
+  const saveSocialLinks = async () => {
+    setSaving(true); setMessage('');
+    try {
+      const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ socialLinks }) });
+      if (!res.ok) throw new Error('Failed to save social links');
+      setMessage('Social links saved');
+    } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
+  };
+
+  const saveTeam = async () => {
+    setSaving(true); setMessage('');
+    try {
+      const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team }) });
+      if (!res.ok) throw new Error('Failed to save team');
+      setMessage('Team saved');
+    } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
+  };
+
+  const saveGetInTouch = async () => {
+    setSaving(true); setMessage('');
+    try {
+      const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ getInTouch: { headline, description, email, phone, addressLines } }) });
+      if (!res.ok) throw new Error('Failed to save get in touch');
+      setMessage('Get in Touch saved');
+    } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
+  };
+
+  const saveFeaturedPlaylist = async () => {
+    setSaving(true); setMessage('');
+    try {
+      const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ featuredPlaylist }) });
+      if (!res.ok) throw new Error('Failed to save playlist');
+      setMessage('Featured playlist saved');
+    } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
+  };
+
   if (loading || !user) return null;
 
   return (
@@ -113,6 +149,9 @@ export default function SettingsPage() {
           </div>
         ))}
         <button className="btn btn-outline" onClick={()=> setFeaturedPlaylist({ ...featuredPlaylist, items: [...(featuredPlaylist.items||[]), { title: '', thumbnail: '', youtubeId: '' }] })}>Add Playlist Item</button>
+        <div style={{ marginTop: '0.75rem' }}>
+          <button className="btn btn-primary" onClick={saveFeaturedPlaylist} disabled={saving}>{saving ? 'Saving...' : 'Save Playlist'}</button>
+        </div>
       </section>
 
       <section style={{ marginTop: '2rem', background: 'white', padding: '1.5rem', borderRadius: 10, boxShadow: 'var(--shadow)' }}>
@@ -142,6 +181,12 @@ export default function SettingsPage() {
           </div>
         ))}
         <button className="btn btn-outline" onClick={() => setSocialLinks([...socialLinks, { platform: '', label: '', url: '', iconClass: '' }])}>Add Social Link</button>
+        <div style={{ marginTop: '0.75rem' }}>
+          <button className="btn btn-primary" onClick={saveSocialLinks} disabled={saving}>{saving ? 'Saving...' : 'Save Social Links'}</button>
+        </div>
+        <div style={{ marginTop: '0.75rem' }}>
+          <button className="btn btn-primary" onClick={saveGetInTouch} disabled={saving}>{saving ? 'Saving...' : 'Save Get in Touch'}</button>
+        </div>
       </section>
 
       <section style={{ marginTop: '2rem', background: 'white', padding: '1.5rem', borderRadius: 10, boxShadow: 'var(--shadow)' }}>
@@ -163,6 +208,9 @@ export default function SettingsPage() {
           </div>
         ))}
         <button className="btn btn-outline" onClick={() => setTeam([...team, { name: '', role: '' }])}>Add Team Member</button>
+        <div style={{ marginTop: '0.75rem' }}>
+          <button className="btn btn-primary" onClick={saveTeam} disabled={saving}>{saving ? 'Saving...' : 'Save Team'}</button>
+        </div>
       </section>
 
       <section style={{ marginTop: '2rem', background: 'white', padding: '1.5rem', borderRadius: 10, boxShadow: 'var(--shadow)' }}>
@@ -184,7 +232,6 @@ export default function SettingsPage() {
       </section>
 
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-        <button className="btn btn-primary" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save Settings'}</button>
         {message && <span>{message}</span>}
       </div>
     </div>
