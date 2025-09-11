@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import ImageUpload from '@/components/ImageUpload';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ToastProvider';
 
 interface SocialLink { platform: string; label: string; url: string; iconClass?: string }
 interface TeamMember { name: string; role: string; image?: string; bio?: string }
@@ -22,6 +23,7 @@ export default function SettingsPage() {
   const [addressLines, setAddressLines] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const { notify } = useToast();
   const iconOptions = [
     { value: 'fab fa-youtube', label: 'YouTube' },
     { value: 'fab fa-instagram', label: 'Instagram' },
@@ -61,8 +63,10 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ socialLinks, team, featuredPlaylist, getInTouch: { headline, description, email, phone, addressLines } }) });
       if (!res.ok) throw new Error('Failed to save');
       setMessage('Saved successfully');
+      notify('Settings saved', 'success');
     } catch (e: any) {
       setMessage(e.message || 'Save failed');
+      notify(e.message || 'Save failed', 'error');
     } finally { setSaving(false); }
   };
 
@@ -72,6 +76,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ socialLinks }) });
       if (!res.ok) throw new Error('Failed to save social links');
       setMessage('Social links saved');
+      notify('Social links saved', 'success');
     } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
   };
 
@@ -81,6 +86,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team }) });
       if (!res.ok) throw new Error('Failed to save team');
       setMessage('Team saved');
+      notify('Team saved', 'success');
     } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
   };
 
@@ -90,6 +96,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ getInTouch: { headline, description, email, phone, addressLines } }) });
       if (!res.ok) throw new Error('Failed to save get in touch');
       setMessage('Get in Touch saved');
+      notify('Get in Touch saved', 'success');
     } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
   };
 
@@ -99,6 +106,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ featuredPlaylist }) });
       if (!res.ok) throw new Error('Failed to save playlist');
       setMessage('Featured playlist saved');
+      notify('Featured playlist saved', 'success');
     } catch (e: any) { setMessage(e.message || 'Save failed'); } finally { setSaving(false); }
   };
 
