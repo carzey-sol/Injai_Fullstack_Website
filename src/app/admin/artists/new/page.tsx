@@ -34,27 +34,77 @@ export default function NewArtistPage() {
   if (loading || !user) return null;
 
   return (
-    <div className="container" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
-      <h1 className="page-title">Add New Artist</h1>
-      <form className="contact-form" onSubmit={onSubmit}>
-        {error && <div className="error">{error}</div>}
-        <div className="form-group"><label>Name</label><input value={name} onChange={(e)=>setName(e.target.value)} required /></div>
-        <div className="form-group"><label>Bio</label><textarea rows={4} value={bio} onChange={(e)=>setBio(e.target.value)} required /></div>
-        <div className="form-group"><label>Category</label>
-          <select value={category} onChange={(e)=>setCategory(e.target.value as any)}>
-            <option value="pioneers">pioneers</option>
-            <option value="collaborators">collaborators</option>
-            <option value="emerging">emerging</option>
-          </select>
+    <div className="admin-container">
+      <div className="admin-header">
+        <h1>Add New Artist</h1>
+      </div>
+
+      {error && (
+        <div className="error-message">
+          {error}
+          <button onClick={() => setError('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
         </div>
-        <div className="form-group"><label>Image URL</label><input value={image} onChange={(e)=>setImage(e.target.value)} required /></div>
-        <div className="form-group"><label>Thumbnail URL</label><input value={thumbnail} onChange={(e)=>setThumbnail(e.target.value)} required /></div>
-        <div className="form-group"><label>Years Active</label><input type="number" value={yearsActive} onChange={(e)=>setYearsActive(parseInt(e.target.value||'0'))} min={0} required /></div>
-        <div className="form-group"><label>Tracks Released</label><input type="number" value={tracksReleased} onChange={(e)=>setTracksReleased(parseInt(e.target.value||'0'))} min={0} required /></div>
-        <div className="form-group"><label>Streams</label><input type="number" value={streams} onChange={(e)=>setStreams(parseInt(e.target.value||'0'))} min={0} required /></div>
-        <div className="form-group"><label><input type="checkbox" checked={featured} onChange={(e)=>setFeatured(e.target.checked)} /> Featured</label></div>
-        <button className="btn btn-primary" disabled={submitting} type="submit">{submitting ? 'Saving...' : 'Save'}</button>
-      </form>
+      )}
+
+      <div className="admin-form">
+        <form onSubmit={onSubmit}>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Name</label>
+              <input value={name} onChange={(e)=>setName(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Category</label>
+              <select value={category} onChange={(e)=>setCategory(e.target.value as any)}>
+                <option value="pioneers">Pioneers</option>
+                <option value="collaborators">Collaborators</option>
+                <option value="emerging">Emerging</option>
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Bio</label>
+            <textarea rows={4} value={bio} onChange={(e)=>setBio(e.target.value)} required />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Image URL</label>
+              <input value={image} onChange={(e)=>setImage(e.target.value)} required />
+              {image && (
+                <img src={image} alt="Preview" className="image-preview" />
+              )}
+            </div>
+            <div className="form-group">
+              <label>Thumbnail URL</label>
+              <input value={thumbnail} onChange={(e)=>setThumbnail(e.target.value)} required />
+              {thumbnail && (
+                <img src={thumbnail} alt="Thumbnail Preview" className="thumbnail-preview" />
+              )}
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Years Active</label>
+              <input type="number" value={yearsActive} onChange={(e)=>setYearsActive(parseInt(e.target.value||'0'))} min={0} required />
+            </div>
+            <div className="form-group">
+              <label>Tracks Released</label>
+              <input type="number" value={tracksReleased} onChange={(e)=>setTracksReleased(parseInt(e.target.value||'0'))} min={0} required />
+            </div>
+            <div className="form-group">
+              <label>Streams</label>
+              <input type="number" value={streams} onChange={(e)=>setStreams(parseInt(e.target.value||'0'))} min={0} required />
+            </div>
+          </div>
+          <div className="form-group">
+            <label>
+              <input type="checkbox" checked={featured} onChange={(e)=>setFeatured(e.target.checked)} />
+              Featured Artist
+            </label>
+          </div>
+          <button className="btn btn-primary" disabled={submitting} type="submit">{submitting ? 'Saving...' : 'Save Artist'}</button>
+        </form>
+      </div>
     </div>
   );
 }

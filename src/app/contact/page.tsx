@@ -1,6 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface SocialLink {
+  platform: string;
+  label: string;
+  url: string;
+  iconClass?: string;
+}
+
+interface GetInTouch {
+  headline?: string;
+  description?: string;
+  email?: string;
+  phone?: string;
+  addressLines?: string[];
+}
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +26,27 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [getInTouch, setGetInTouch] = useState<GetInTouch>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          setSocialLinks(data.socialLinks || []);
+          setGetInTouch(data.getInTouch || {});
+        }
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -38,13 +74,24 @@ export default function ContactPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <section className="page-hero">
+        <div className="container">
+          <h1 className="page-title">Contact Us</h1>
+          <p className="page-subtitle">Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       {/* Hero Section */}
       <section className="page-hero">
         <div className="container">
           <h1 className="page-title">Contact Us</h1>
-          <p className="page-subtitle">Get in Touch with Injai Channel</p>
+          <p className="page-subtitle">{getInTouch.headline || 'Get in Touch with Injai Channel'}</p>
         </div>
       </section>
 
@@ -54,42 +101,46 @@ export default function ContactPage() {
           <div className="contact-content">
             <div className="contact-info">
               <h2>Get in Touch</h2>
-              <p>Have questions, suggestions, or want to collaborate? We'd love to hear from you. Reach out to us through any of the channels below.</p>
+              <p>{getInTouch.description || 'Have questions, suggestions, or want to collaborate? We\'d love to hear from you. Reach out to us through any of the channels below.'}</p>
               
               <div className="contact-methods">
-                <div className="contact-method">
-                  <div className="contact-icon">
-                    <i className="fas fa-envelope"></i>
+                {getInTouch.email && (
+                  <div className="contact-method">
+                    <div className="contact-icon">
+                      <i className="fas fa-envelope"></i>
+                    </div>
+                    <div className="contact-details">
+                      <h3>Email</h3>
+                      <p>{getInTouch.email}</p>
+                    </div>
                   </div>
-                  <div className="contact-details">
-                    <h3>Email</h3>
-                    <p>info@injai-channel.com</p>
-                    <p>support@injai-channel.com</p>
-                  </div>
-                </div>
+                )}
 
-                <div className="contact-method">
-                  <div className="contact-icon">
-                    <i className="fas fa-phone"></i>
+                {getInTouch.phone && (
+                  <div className="contact-method">
+                    <div className="contact-icon">
+                      <i className="fas fa-phone"></i>
+                    </div>
+                    <div className="contact-details">
+                      <h3>Phone</h3>
+                      <p>{getInTouch.phone}</p>
+                    </div>
                   </div>
-                  <div className="contact-details">
-                    <h3>Phone</h3>
-                    <p>+1 (555) 123-4567</p>
-                    <p>Monday - Friday, 9AM - 6PM EST</p>
-                  </div>
-                </div>
+                )}
 
-                <div className="contact-method">
-                  <div className="contact-icon">
-                    <i className="fas fa-map-marker-alt"></i>
+                {getInTouch.addressLines && getInTouch.addressLines.length > 0 && (
+                  <div className="contact-method">
+                    <div className="contact-icon">
+                      <i className="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div className="contact-details">
+                      <h3>Address</h3>
+                      {getInTouch.addressLines.map((line, index) => (
+                        <p key={index}>{line}</p>
+                      ))}
+                    </div>
                   </div>
-                  <div className="contact-details">
-                    <h3>Address</h3>
-                    <p>123 Music Street</p>
-                    <p>Hip Hop City, HC 12345</p>
-                    <p>United States</p>
-                  </div>
-                </div>
+                )}
 
                 <div className="contact-method">
                   <div className="contact-icon">
@@ -104,26 +155,24 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="social-links">
-                <h3>Follow Us</h3>
-                <div className="social-icons">
-                  <a href="#" className="social-icon">
-                    <i className="fab fa-facebook"></i>
-                  </a>
-                  <a href="#" className="social-icon">
-                    <i className="fab fa-twitter"></i>
-                  </a>
-                  <a href="#" className="social-icon">
-                    <i className="fab fa-instagram"></i>
-                  </a>
-                  <a href="#" className="social-icon">
-                    <i className="fab fa-youtube"></i>
-                  </a>
-                  <a href="#" className="social-icon">
-                    <i className="fab fa-tiktok"></i>
-                  </a>
+              {socialLinks.length > 0 && (
+                <div className="social-links">
+                  <h3>Follow Us</h3>
+                  <div className="social-icons">
+                    {socialLinks.map((link, index) => (
+                      <a 
+                        key={index} 
+                        href={link.url} 
+                        className="social-icon"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className={link.iconClass || 'fas fa-link'}></i>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="contact-form-container">

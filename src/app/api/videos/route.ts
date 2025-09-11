@@ -107,4 +107,84 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// PUT /api/videos - Update video (admin only)
+export async function PUT(request: NextRequest) {
+  try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { id, ...videoData } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'Video ID is required' }, { status: 400 });
+    }
+
+    const updated = await prisma.video.update({
+      where: { id },
+      data: {
+        title: videoData.title,
+        description: videoData.description,
+        youtubeId: videoData.youtubeId,
+        category: videoData.category,
+        uploadDate: videoData.uploadDate ? new Date(videoData.uploadDate) : new Date(),
+        thumbnail: videoData.thumbnail,
+        featured: !!videoData.featured,
+        views: typeof videoData.views === 'number' ? videoData.views : 0,
+        artistId: videoData.artistId || videoData.artist?._id || videoData.artist?.id || null,
+      }
+    });
+
+    return NextResponse.json(
+      { message: 'Video updated successfully', video: updated },
+      { status: 200 }
+    );
+
+  } catch (error: any) {
+    console.error('Error updating video:', error);
+    return NextResponse.json(
+      { error: 'Failed to update video' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/videos - Delete video (admin only)
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Video ID is required' }, { status: 400 });
+    }
+
+    await prisma.video.delete({
+      where: { id }
+    });
+
+    return NextResponse.json(
+      { message: 'Video deleted successfully' },
+      { status: 200 }
+    );
+
+  } catch (error: any) {
+    console.error('Error deleting video:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete video' },
+      { status: 500 }
+    );
+  }
 } 

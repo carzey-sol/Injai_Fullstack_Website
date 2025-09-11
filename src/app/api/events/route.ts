@@ -39,6 +39,14 @@ export async function GET(request: NextRequest) {
       },
       orderBy: { date: 'asc' },
       take,
+      include: {
+        lineup: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     });
 
     const transformed = events.map((e: any) => ({
@@ -55,7 +63,7 @@ export async function GET(request: NextRequest) {
       ticketPrice: e.ticketPrice,
       ticketUrl: e.ticketUrl,
       capacity: e.capacity,
-      lineup: Array.isArray(e.lineup) ? e.lineup.map((a: any) => ({ id: a.id, name: a.name })) : []
+      lineup: e.lineup || []
     }));
 
     return NextResponse.json(transformed);
@@ -93,7 +101,7 @@ export async function POST(request: NextRequest) {
         ticketPrice: eventData.ticketPrice ?? null,
         ticketUrl: eventData.ticketUrl ?? null,
         capacity: eventData.capacity ?? null,
-        lineup: Array.isArray(eventData.lineup) ? eventData.lineup : [],
+        // lineup will be handled separately if needed
       }
     });
     return NextResponse.json({ message: 'Event created successfully', event: created }, { status: 201 });
@@ -102,6 +110,85 @@ export async function POST(request: NextRequest) {
     console.error('Error creating event:', error);
     return NextResponse.json(
       { error: 'Failed to create event' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/events - Update event (admin only)
+export async function PUT(request: NextRequest) {
+  try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { id, ...eventData } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'Event ID is required' }, { status: 400 });
+    }
+
+    const updated = await prisma.event.update({
+      where: { id },
+      data: {
+        title: eventData.title,
+        description: eventData.description,
+        date: eventData.date ? new Date(eventData.date) : new Date(),
+        location: eventData.location,
+        type: eventData.type,
+        status: eventData.status,
+        image: eventData.image,
+        featured: !!eventData.featured,
+        ticketPrice: eventData.ticketPrice ?? null,
+        ticketUrl: eventData.ticketUrl ?? null,
+        capacity: eventData.capacity ?? null,
+      }
+    });
+
+    return NextResponse.json({ message: 'Event updated successfully', event: updated }, { status: 200 });
+
+  } catch (error: any) {
+    console.error('Error updating event:', error);
+    return NextResponse.json(
+      { error: 'Failed to update event' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/events - Delete event (admin only)
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Event ID is required' }, { status: 400 });
+    }
+
+    await prisma.event.delete({
+      where: { id }
+    });
+
+    return NextResponse.json(
+      { message: 'Event deleted successfully' },
+      { status: 200 }
+    );
+
+  } catch (error: any) {
+    console.error('Error deleting event:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete event' },
       { status: 500 }
     );
   }

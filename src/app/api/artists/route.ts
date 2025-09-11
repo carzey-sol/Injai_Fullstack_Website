@@ -101,3 +101,91 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// PUT /api/artists - Update artist (admin only)
+export async function PUT(request: NextRequest) {
+  try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { id, ...artistData } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'Artist ID is required' }, { status: 400 });
+    }
+
+    const updated = await prisma.artist.update({
+      where: { id },
+      data: {
+        name: artistData.name,
+        bio: artistData.bio,
+        category: artistData.category,
+        image: artistData.image,
+        thumbnail: artistData.thumbnail,
+        yearsActive: artistData.stats?.yearsActive ?? 0,
+        tracksReleased: artistData.stats?.tracksReleased ?? 0,
+        streams: artistData.stats?.streams ?? 0,
+        youtube: artistData.socialLinks?.youtube ?? null,
+        instagram: artistData.socialLinks?.instagram ?? null,
+        twitter: artistData.socialLinks?.twitter ?? null,
+        tiktok: artistData.socialLinks?.tiktok ?? null,
+        featured: !!artistData.featured,
+      },
+    });
+
+    return NextResponse.json(
+      { message: 'Artist updated successfully', artist: updated },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error updating artist:', error);
+    return NextResponse.json(
+      { error: 'Failed to update artist' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/artists - Delete artist (admin only)
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = request.cookies.get('token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (!decoded || decoded.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Artist ID is required' }, { status: 400 });
+    }
+
+    await prisma.artist.delete({
+      where: { id }
+    });
+
+    return NextResponse.json(
+      { message: 'Artist deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error deleting artist:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete artist' },
+      { status: 500 }
+    );
+  }
+}

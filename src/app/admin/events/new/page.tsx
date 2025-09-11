@@ -36,38 +36,89 @@ export default function NewEventPage() {
   if (loading || !user) return null;
 
   return (
-    <div className="container" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
-      <h1 className="page-title">Add New Event</h1>
-      <form className="contact-form" onSubmit={onSubmit}>
-        {error && <div className="error">{error}</div>}
-        <div className="form-group"><label>Title</label><input value={title} onChange={(e)=>setTitle(e.target.value)} required /></div>
-        <div className="form-group"><label>Description</label><textarea rows={4} value={description} onChange={(e)=>setDescription(e.target.value)} required /></div>
-        <div className="form-group"><label>Date</label><input type="datetime-local" value={date} onChange={(e)=>setDate(e.target.value)} required /></div>
-        <div className="form-group"><label>Location</label><input value={location} onChange={(e)=>setLocation(e.target.value)} required /></div>
-        <div className="form-group"><label>Type</label>
-          <select value={type} onChange={(e)=>setType(e.target.value as any)}>
-            <option value="festival">festival</option>
-            <option value="concert">concert</option>
-            <option value="release">release</option>
-            <option value="competition">competition</option>
-            <option value="workshop">workshop</option>
-          </select>
+    <div className="admin-container">
+      <div className="admin-header">
+        <h1>Add New Event</h1>
+      </div>
+
+      {error && (
+        <div className="error-message">
+          {error}
+          <button onClick={() => setError('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
         </div>
-        <div className="form-group"><label>Status</label>
-          <select value={status} onChange={(e)=>setStatus(e.target.value as any)}>
-            <option value="upcoming">upcoming</option>
-            <option value="ongoing">ongoing</option>
-            <option value="completed">completed</option>
-            <option value="cancelled">cancelled</option>
-          </select>
-        </div>
-        <div className="form-group"><label>Image URL</label><input value={image} onChange={(e)=>setImage(e.target.value)} required /></div>
-        <div className="form-group"><label><input type="checkbox" checked={featured} onChange={(e)=>setFeatured(e.target.checked)} /> Featured</label></div>
-        <div className="form-group"><label>Ticket Price (optional)</label><input type="number" value={typeof ticketPrice==='number'?ticketPrice:''} onChange={(e)=>setTicketPrice(e.target.value?parseFloat(e.target.value):undefined)} min={0} /></div>
-        <div className="form-group"><label>Ticket URL (optional)</label><input value={ticketUrl} onChange={(e)=>setTicketUrl(e.target.value)} /></div>
-        <div className="form-group"><label>Capacity (optional)</label><input type="number" value={typeof capacity==='number'?capacity:''} onChange={(e)=>setCapacity(e.target.value?parseInt(e.target.value):undefined)} min={1} /></div>
-        <button className="btn btn-primary" disabled={submitting} type="submit">{submitting ? 'Saving...' : 'Save'}</button>
-      </form>
+      )}
+
+      <div className="admin-form">
+        <form onSubmit={onSubmit}>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Title</label>
+              <input value={title} onChange={(e)=>setTitle(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Type</label>
+              <select value={type} onChange={(e)=>setType(e.target.value as any)}>
+                <option value="festival">Festival</option>
+                <option value="concert">Concert</option>
+                <option value="release">Release</option>
+                <option value="competition">Competition</option>
+                <option value="workshop">Workshop</option>
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Description</label>
+            <textarea rows={4} value={description} onChange={(e)=>setDescription(e.target.value)} required />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Date & Time</label>
+              <input type="datetime-local" value={date} onChange={(e)=>setDate(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Status</label>
+              <select value={status} onChange={(e)=>setStatus(e.target.value as any)}>
+                <option value="upcoming">Upcoming</option>
+                <option value="ongoing">Ongoing</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Location</label>
+            <input value={location} onChange={(e)=>setLocation(e.target.value)} required />
+          </div>
+          <div className="form-group">
+            <label>Image URL</label>
+            <input value={image} onChange={(e)=>setImage(e.target.value)} required />
+            {image && (
+              <img src={image} alt="Preview" className="image-preview" />
+            )}
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Ticket Price (optional)</label>
+              <input type="number" value={typeof ticketPrice==='number'?ticketPrice:''} onChange={(e)=>setTicketPrice(e.target.value?parseFloat(e.target.value):undefined)} min={0} step="0.01" />
+            </div>
+            <div className="form-group">
+              <label>Capacity (optional)</label>
+              <input type="number" value={typeof capacity==='number'?capacity:''} onChange={(e)=>setCapacity(e.target.value?parseInt(e.target.value):undefined)} min={1} />
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Ticket URL (optional)</label>
+            <input value={ticketUrl} onChange={(e)=>setTicketUrl(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>
+              <input type="checkbox" checked={featured} onChange={(e)=>setFeatured(e.target.checked)} />
+              Featured Event
+            </label>
+          </div>
+          <button className="btn btn-primary" disabled={submitting} type="submit">{submitting ? 'Saving...' : 'Save Event'}</button>
+        </form>
+      </div>
     </div>
   );
 }

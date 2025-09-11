@@ -12,6 +12,7 @@
     --text-color: #333333;
     --light-gray: #f5f5f5;
     --dark-gray: #666666;
+    --border-color: #e0e0e0;
     --gradient-primary: linear-gradient(135deg, #000000 0%, #333333 100%);
     --gradient-secondary: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -1474,4 +1475,302 @@ h1, h2, h3, h4, h5, h6 {
 
 .error {
     color: #721c24;
+}
+
+/* Admin Dashboard Styles */
+.admin-container {
+    padding: 2rem;
+    background: var(--light-gray);
+    min-height: 100vh;
+}
+
+.admin-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.admin-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-form .form-group input,
+.admin-form .form-group select,
+.admin-form .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.admin-form .form-group input:focus,
+.admin-form .form-group select:focus,
+.admin-form .form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.admin-form .form-group input:hover,
+.admin-form .form-group select:hover,
+.admin-form .form-group textarea:hover {
+    border-color: var(--dark-gray);
+}
+
+.admin-form .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.admin-form .form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+    transform: scale(1.2);
+}
+
+.admin-form .form-group input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.admin-form .form-group input[type="number"]::-webkit-outer-spin-button,
+.admin-form .form-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.admin-card-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.admin-card-actions button {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-card-actions .btn-edit {
+    background: #007bff;
+    color: white;
+}
+
+.admin-card-actions .btn-edit:hover {
+    background: #0056b3;
+}
+
+.admin-card-actions .btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.admin-card-actions .btn-delete:hover {
+    background: #c82333;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.admin-header h1 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.image-preview {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 2px solid var(--border-color);
+}
+
+.thumbnail-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 2px solid var(--border-color);
+}
+
+.youtube-preview {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border: 1px solid #f5c6cb;
+}
+
+/* User Management Styles */
+.user-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+}
+
+.user-info p {
+    margin: 0;
+    color: var(--dark-gray);
+    font-size: 14px;
+}
+
+.user-role {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Video Thumbnail Styles */
+.video-thumbnail-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1rem;
+    border: 2px solid var(--border-color);
+}
+
+.video-thumbnail-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.youtube-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    background: var(--light-gray);
+    border-radius: 8px;
+    margin-top: 1rem;
+    color: var(--dark-gray);
+}
+
+/* Responsive Admin Styles */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1rem;
+    }
+    
+    .admin-form {
+        padding: 1rem;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .user-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
 } 
