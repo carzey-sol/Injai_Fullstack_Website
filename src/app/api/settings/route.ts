@@ -34,8 +34,13 @@ export async function POST(request: NextRequest) {
     if (body.team !== undefined) updateData.team = body.team;
     if (body.featuredPlaylist !== undefined) updateData.featuredPlaylist = body.featuredPlaylist;
     if (body.getInTouch !== undefined) {
-      const currentGetInTouch = existing?.getInTouch || {};
-      updateData.getInTouch = { ...currentGetInTouch, ...body.getInTouch };
+      const current = (existing && typeof (existing as any).getInTouch === 'object' && !Array.isArray((existing as any).getInTouch))
+        ? (existing as any).getInTouch
+        : {};
+      const incoming = (body && typeof body.getInTouch === 'object' && !Array.isArray(body.getInTouch))
+        ? body.getInTouch
+        : {};
+      updateData.getInTouch = { ...(current as any), ...(incoming as any) };
     }
 
     const saved = existing
