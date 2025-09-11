@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function NewArtistPage() {
   const { user, loading } = useAuth();
@@ -68,18 +69,20 @@ export default function NewArtistPage() {
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label>Image URL</label>
-              <input value={image} onChange={(e)=>setImage(e.target.value)} required />
-              {image && (
-                <img src={image} alt="Preview" className="image-preview" />
-              )}
+              <ImageUpload
+                onImageUpload={setImage}
+                currentImage={image}
+                folder="artists/main"
+                label="Artist Image"
+              />
             </div>
             <div className="form-group">
-              <label>Thumbnail URL</label>
-              <input value={thumbnail} onChange={(e)=>setThumbnail(e.target.value)} required />
-              {thumbnail && (
-                <img src={thumbnail} alt="Thumbnail Preview" className="thumbnail-preview" />
-              )}
+              <ImageUpload
+                onImageUpload={setThumbnail}
+                currentImage={thumbnail}
+                folder="artists/thumbnails"
+                label="Thumbnail Image"
+              />
             </div>
           </div>
           <div className="form-row">

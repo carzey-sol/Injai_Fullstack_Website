@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function NewEventPage() {
   const { user, loading } = useAuth();
@@ -90,11 +91,12 @@ export default function NewEventPage() {
             <input value={location} onChange={(e)=>setLocation(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label>Image URL</label>
-            <input value={image} onChange={(e)=>setImage(e.target.value)} required />
-            {image && (
-              <img src={image} alt="Preview" className="image-preview" />
-            )}
+            <ImageUpload
+              onImageUpload={setImage}
+              currentImage={image}
+              folder="events"
+              label="Event Image"
+            />
           </div>
           <div className="form-row">
             <div className="form-group">

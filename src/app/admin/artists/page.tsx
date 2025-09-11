@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Artist {
   id: string;
@@ -211,28 +212,20 @@ export default function AdminArtistsPage() {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label>Image URL</label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  required
+                <ImageUpload
+                  onImageUpload={(url) => setFormData({ ...formData, image: url })}
+                  currentImage={formData.image}
+                  folder="artists/main"
+                  label="Artist Image"
                 />
-                {formData.image && (
-                  <img src={formData.image} alt="Preview" className="image-preview" />
-                )}
               </div>
               <div className="form-group">
-                <label>Thumbnail URL</label>
-                <input
-                  type="url"
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  required
+                <ImageUpload
+                  onImageUpload={(url) => setFormData({ ...formData, thumbnail: url })}
+                  currentImage={formData.thumbnail}
+                  folder="artists/thumbnails"
+                  label="Thumbnail Image"
                 />
-                {formData.thumbnail && (
-                  <img src={formData.thumbnail} alt="Thumbnail Preview" className="thumbnail-preview" />
-                )}
               </div>
             </div>
             <div className="form-row">

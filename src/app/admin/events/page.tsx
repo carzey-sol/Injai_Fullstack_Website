@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Event {
   id: string;
@@ -240,15 +241,12 @@ export default function AdminEventsPage() {
               />
             </div>
             <div className="form-group">
-              <label>Image URL</label>
-              <input
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                required
+              <ImageUpload
+                onImageUpload={(url) => setFormData({ ...formData, image: url })}
+                currentImage={formData.image}
+                folder="events"
+                label="Event Image"
               />
-              {formData.image && (
-                <img src={formData.image} alt="Preview" className="image-preview" />
-              )}
             </div>
             <div className="form-row">
               <div className="form-group">
