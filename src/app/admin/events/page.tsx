@@ -55,11 +55,11 @@ export default function AdminEventsPage() {
   }, []);
 
   const loadEvents = async () => {
-    try {
+      try {
       setLoadingEvents(true);
-      const res = await fetch('/api/events');
-      if (!res.ok) throw new Error('Failed to fetch events');
-      setEvents(await res.json());
+        const res = await fetch('/api/events');
+        if (!res.ok) throw new Error('Failed to fetch events');
+        setEvents(await res.json());
     } catch (e: any) { 
       setError(e.message); 
     } finally { 
@@ -321,11 +321,11 @@ export default function AdminEventsPage() {
                     Delete
                   </button>
                 </div>
-                <div className="event-date">
+            <div className="event-date">
                   <span className="day">{new Date(event.date).getDate()}</span>
                   <span className="month">{new Date(event.date).toLocaleDateString('en-US',{month:'short'}).toUpperCase()}</span>
-                </div>
-                <div className="event-info">
+            </div>
+            <div className="event-info">
                   <h3>{event.title}</h3>
                   <p>{event.description}</p>
                   <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
@@ -336,9 +336,9 @@ export default function AdminEventsPage() {
                     {event.capacity && <p>Capacity: {event.capacity}</p>}
                     {event.featured && <span className="status">Featured</span>}
                   </div>
-                </div>
-              </div>
-            ))}
+            </div>
+          </div>
+        ))}
           </div>
         )}
       </div>

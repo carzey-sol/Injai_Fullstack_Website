@@ -54,9 +54,9 @@ export default function AdminVideosPage() {
   const loadVideos = async () => {
     try {
       setLoadingVideos(true);
-      const res = await fetch('/api/videos');
-      if (!res.ok) throw new Error('Failed to fetch videos');
-      setVideos(await res.json());
+        const res = await fetch('/api/videos');
+        if (!res.ok) throw new Error('Failed to fetch videos');
+        setVideos(await res.json());
     } catch (e: any) { 
       setError(e.message); 
     } finally { 
@@ -298,7 +298,7 @@ export default function AdminVideosPage() {
                     alt={video.title}
                   />
                 </div>
-                <div className="video-info">
+            <div className="video-info">
                   <h3>{video.title}</h3>
                   <p>{video.description}</p>
                   <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
@@ -308,9 +308,9 @@ export default function AdminVideosPage() {
                     <p>Uploaded: {new Date(video.uploadDate).toLocaleDateString()}</p>
                     {video.featured && <span className="status">Featured</span>}
                   </div>
-                </div>
-              </div>
-            ))}
+            </div>
+          </div>
+        ))}
           </div>
         )}
       </div>

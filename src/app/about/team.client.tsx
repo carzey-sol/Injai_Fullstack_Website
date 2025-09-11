@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface TeamMember { name: string; role: string; image?: string; bio?: string }
 
@@ -26,8 +27,13 @@ export default function TeamClient() {
         {team.map((m, i) => (
           <div key={i} style={{ background: 'white', padding: '2rem', borderRadius: '10px', textAlign: 'center', boxShadow: 'var(--shadow)' }}>
             {m.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={m.image} alt={m.name} style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: '50%', marginBottom: '1rem' }} />
+              <Image
+                src={m.image}
+                alt={m.name}
+                width={120}
+                height={120}
+                style={{ objectFit: 'cover', borderRadius: '50%', marginBottom: '1rem' }}
+              />
             ) : (
               <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'var(--light-gray)', margin: '0 auto 1rem' }}></div>
             )}

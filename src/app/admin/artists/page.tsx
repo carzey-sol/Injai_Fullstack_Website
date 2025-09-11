@@ -52,11 +52,11 @@ export default function AdminArtistsPage() {
   }, []);
 
   const loadArtists = async () => {
-    try {
+      try {
       setLoadingArtists(true);
-      const res = await fetch('/api/artists');
-      if (!res.ok) throw new Error('Failed to fetch artists');
-      setArtists(await res.json());
+        const res = await fetch('/api/artists');
+        if (!res.ok) throw new Error('Failed to fetch artists');
+        setArtists(await res.json());
     } catch (e: any) { 
       setError(e.message); 
     } finally { 
@@ -305,10 +305,10 @@ export default function AdminArtistsPage() {
                     Delete
                   </button>
                 </div>
-                <div className="artist-image">
+            <div className="artist-image">
                   <img src={artist.image} alt={artist.name} />
-                </div>
-                <div className="artist-info">
+            </div>
+            <div className="artist-info">
                   <h3>{artist.name}</h3>
                   <p>{artist.bio}</p>
                   <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
@@ -318,9 +318,9 @@ export default function AdminArtistsPage() {
                     <p>Streams: {artist.stats.streams.toLocaleString()}</p>
                     {artist.featured && <span className="status">Featured</span>}
                   </div>
-                </div>
-              </div>
-            ))}
+            </div>
+          </div>
+        ))}
           </div>
         )}
       </div>
