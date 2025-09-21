@@ -192,9 +192,7 @@ export default function SettingsPage() {
         <div style={{ marginTop: '0.75rem' }}>
           <button className="btn btn-primary" onClick={saveSocialLinks} disabled={saving}>{saving ? 'Saving...' : 'Save Social Links'}</button>
         </div>
-        <div style={{ marginTop: '0.75rem' }}>
-          <button className="btn btn-primary" onClick={saveGetInTouch} disabled={saving}>{saving ? 'Saving...' : 'Save Get in Touch'}</button>
-        </div>
+        
       </section>
 
       <section style={{ marginTop: '2rem', background: 'white', padding: '1.5rem', borderRadius: 10, boxShadow: 'var(--shadow)' }}>
@@ -236,6 +234,9 @@ export default function SettingsPage() {
             </div>
           ))}
           <button className="btn btn-outline" onClick={()=> setAddressLines([...(addressLines||[]), ''])}>Add Address Line</button>
+        </div>
+        <div style={{ marginTop: '0.75rem' }}>
+          <button className="btn btn-primary" onClick={saveGetInTouch} disabled={saving}>{saving ? 'Saving...' : 'Save Get in Touch'}</button>
         </div>
       </section>
 
