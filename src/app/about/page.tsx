@@ -10,65 +10,31 @@ export default function AboutPage() {
       </section>
 
       {/* Story Section */}
-      <section style={{ padding: '5rem 0' }}>
+      <section className="story-section">
         <div className="container">
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '1fr 1fr', 
-            gap: '4rem', 
-            alignItems: 'center' 
-          }}>
-            <div>
-              <h2 style={{ 
-                fontSize: '2.5rem', 
-                marginBottom: '2rem', 
-                color: 'var(--primary-color)' 
-              }}>
+          <div className="story-content">
+            <div className="story-text">
+              <h2 className="story-title">
                 Our Mission
               </h2>
-              <p style={{ 
-                fontSize: '1.1rem', 
-                lineHeight: '1.8', 
-                color: 'var(--dark-gray)',
-                marginBottom: '1.5rem'
-              }}>
+              <p className="story-paragraph">
                 Injai Channel is dedicated to promoting and preserving Guigui rap culture. 
                 We believe in the power of authentic storytelling and the importance of 
                 giving voice to the urban experience.
               </p>
-              <p style={{ 
-                fontSize: '1.1rem', 
-                lineHeight: '1.8', 
-                color: 'var(--dark-gray)',
-                marginBottom: '1.5rem'
-              }}>
+              <p className="story-paragraph">
                 Founded by passionate music enthusiasts, we've created a platform that 
                 celebrates the raw energy, complex wordplay, and cultural significance 
                 of Guigui rap music.
               </p>
-              <p style={{ 
-                fontSize: '1.1rem', 
-                lineHeight: '1.8', 
-                color: 'var(--dark-gray)'
-              }}>
+              <p className="story-paragraph">
                 Our goal is to connect artists with their audience, preserve cultural 
                 heritage, and foster the next generation of Guigui rap talent.
               </p>
             </div>
-            <div style={{ 
-              background: 'var(--gradient-primary)', 
-              height: '400px', 
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '1.2rem',
-              textAlign: 'center',
-              padding: '2rem'
-            }}>
-              <div>
-                <i className="fas fa-microphone" style={{ fontSize: '3rem', marginBottom: '1rem' }}></i>
+            <div className="story-visual">
+              <div className="visual-content">
+                <i className="fas fa-microphone visual-icon"></i>
                 <h3>Amplifying Voices</h3>
                 <p>Giving platform to authentic Guigui rap culture</p>
               </div>

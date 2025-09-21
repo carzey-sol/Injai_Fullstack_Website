@@ -6,6 +6,7 @@ import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 import FilterButtons from '@/components/FilterButtons';
 import PageHero from '@/components/PageHero';
+import NewsletterSignup from '@/components/NewsletterSignup';
 
 interface NewsArticle {
   id: string;
@@ -231,18 +232,7 @@ export default function NewsPage() {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="news-newsletter">
-        <div className="container">
-          <div className="newsletter-content">
-            <h2>Stay Updated</h2>
-            <p>Subscribe to our newsletter to get the latest news, releases, and updates from the Guigui rap scene.</p>
-            <form className="newsletter-form-large">
-              <input type="email" placeholder="Enter your email address" required />
-              <button type="submit" className="btn btn-primary">Subscribe</button>
-            </form>
-          </div>
-        </div>
-      </section>
+      <NewsletterSignup source="news-page" />
     </div>
   );
 }

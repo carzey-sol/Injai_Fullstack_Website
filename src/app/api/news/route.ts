@@ -79,6 +79,26 @@ export async function POST(request: NextRequest) {
         links
       }
     });
+
+    // Send newsletter if this is a featured article
+    if (featured) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/newsletter`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            articleId: article.id,
+            subject: `New Featured Article: ${title}`,
+            content: content
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to send newsletter:', error);
+        // Don't fail the article creation if newsletter fails
+      }
+    }
     
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
