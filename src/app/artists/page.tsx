@@ -95,19 +95,19 @@ export default function ArtistsPage() {
               className={`btn ${filter === 'pioneers' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilter('pioneers')}
             >
-              Pioneers
+              Top 10 Now
             </button>
             <button 
               className={`btn ${filter === 'collaborators' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilter('collaborators')}
             >
-              Collaborators
+              Highlights
             </button>
             <button 
               className={`btn ${filter === 'emerging' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilter('emerging')}
             >
-              Emerging
+              New Releases
             </button>
           </div>
         </div>

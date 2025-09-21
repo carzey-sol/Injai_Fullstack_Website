@@ -72,6 +72,21 @@ model Event {
   lineup      Artist[] @relation("EventLineup")
 }
 
+model NewsArticle {
+  id          String       @id @default(cuid())
+  title       String
+  content     String       @db.Text
+  image       String
+  excerpt     String       @db.VarChar(200)
+  author      String
+  publishedAt DateTime     @default(now())
+  category    NewsCategory
+  featured    Boolean      @default(false)
+  links       Json         @default("[]")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
 model SiteSettings {
   id         String   @id @default(cuid())
   socialLinks Json     @default("[]")
@@ -80,6 +95,14 @@ model SiteSettings {
   featuredPlaylist Json @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+enum NewsCategory {
+  GENERAL
+  RELEASES
+  EVENTS
+  INTERVIEWS
+  INDUSTRY
 }
 
 

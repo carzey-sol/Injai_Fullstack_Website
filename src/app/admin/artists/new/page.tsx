@@ -57,9 +57,9 @@ export default function NewArtistPage() {
             <div className="form-group">
               <label>Category</label>
               <select value={category} onChange={(e)=>setCategory(e.target.value as any)}>
-                <option value="pioneers">Pioneers</option>
-                <option value="collaborators">Collaborators</option>
-                <option value="emerging">Emerging</option>
+                <option value="pioneers">Top 10 Now</option>
+                <option value="collaborators">Highlights</option>
+                <option value="emerging">New Releases</option>
               </select>
             </div>
           </div>

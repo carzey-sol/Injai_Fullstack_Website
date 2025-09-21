@@ -10,6 +10,7 @@ async function main() {
   await prisma.artist.deleteMany();
   await prisma.user.deleteMany();
   await prisma.siteSettings.deleteMany();
+  await prisma.newsArticle.deleteMany();
 
   // Admin user
   const hashed = await bcrypt.hash('admin123', 12);
@@ -110,6 +111,49 @@ async function main() {
     status: 'upcoming',
     image: 'https://i.ytimg.com/vi/ysMKr3c7fx4/hqdefault.jpg',
   }});
+
+  // News Articles
+  await prisma.newsArticle.createMany({ data: [
+    {
+      title: 'Guigui Rap Scene Reaches New Heights in 2024',
+      content: '<h2>The Rise of Guigui Rap</h2><p>The Guigui rap scene has experienced unprecedented growth this year, with artists like <strong>Straiker</strong> and <strong>Fish Killer</strong> leading the charge. The community has seen a surge in both local and international recognition.</p><p>Key highlights include:</p><ul><li>Over 1 million streams across all platforms</li><li>International collaborations with major labels</li><li>Sold-out concerts in major cities</li></ul><p>The future looks bright for Guigui rap culture!</p>',
+      image: 'https://i.ytimg.com/vi/rRhwls8f-Pc/hqdefault.jpg',
+      excerpt: 'The Guigui rap scene has experienced unprecedented growth this year, with artists leading the charge in both local and international recognition.',
+      author: 'Injai Channel Team',
+      category: 'INDUSTRY',
+      featured: true,
+      links: [
+        { text: 'Watch Latest Videos', url: '/videos' },
+        { text: 'Follow on Instagram', url: 'https://instagram.com/injaichannel' }
+      ]
+    },
+    {
+      title: 'New Album Release: Straiker Drops "Mental"',
+      content: '<h2>Straiker\'s Latest Masterpiece</h2><p>Straiker has officially released his highly anticipated album <em>"Mental"</em>, featuring 12 tracks that showcase his evolution as an artist. The album combines his signature energetic flow with deeper lyrical content.</p><p>Standout tracks include:</p><ul><li>"Mental" - The title track with an infectious beat</li><li>"Street Dreams" - A reflection on his journey</li><li>"Rise Up" - An anthem for the community</li></ul><p>Available now on all major streaming platforms!</p>',
+      image: 'https://i.ytimg.com/vi/rRhwls8f-Pc/hqdefault.jpg',
+      excerpt: 'Straiker has officially released his highly anticipated album "Mental", featuring 12 tracks that showcase his evolution as an artist.',
+      author: 'Music Reporter',
+      category: 'RELEASES',
+      featured: false,
+      links: [
+        { text: 'Stream on Spotify', url: 'https://spotify.com' },
+        { text: 'Watch Music Video', url: '/videos' }
+      ]
+    },
+    {
+      title: 'Guigui Rap Festival 2024: A Night to Remember',
+      content: '<h2>Festival Recap</h2><p>The annual Guigui Rap Festival brought together the best artists in the scene for an unforgettable night of music and culture. Over 1,000 fans packed the Downtown Arena to witness incredible performances.</p><p>Highlights from the night:</p><ul><li>Opening performance by emerging artists</li><li>Collaborative set between Straiker and Fish Killer</li><li>Surprise guest appearance by MC Jin</li><li>Community awards ceremony</li></ul><p>Plans are already underway for next year\'s festival!</p>',
+      image: 'https://i.ytimg.com/vi/ysMKr3c7fx4/hqdefault.jpg',
+      excerpt: 'The annual Guigui Rap Festival brought together the best artists in the scene for an unforgettable night of music and culture.',
+      author: 'Event Coordinator',
+      category: 'EVENTS',
+      featured: false,
+      links: [
+        { text: 'View Event Photos', url: '/gallery' },
+        { text: 'Get Festival Updates', url: '/events' }
+      ]
+    }
+  ]});
 
   // Settings
   await prisma.siteSettings.create({ data: {

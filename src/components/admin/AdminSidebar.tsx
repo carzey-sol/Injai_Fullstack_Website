@@ -35,6 +35,7 @@ export default function AdminSidebar() {
           {link('/admin/artists', 'Artists', 'fas fa-microphone')}
           {link('/admin/videos', 'Videos', 'fas fa-video')}
           {link('/admin/events', 'Events', 'fas fa-calendar')}
+          {link('/admin/news', 'News', 'fas fa-newspaper')}
           {link('/admin/users', 'Users', 'fas fa-users')}
           {link('/admin/settings', 'Settings', 'fas fa-cog')}
           <li>
