@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 interface NewsArticle {
   id: string;
@@ -103,21 +104,26 @@ export default function AdminNewsPage() {
     try {
       const filteredLinks = formData.links.filter(link => link.text.trim() && link.url.trim());
       
-      const res = await fetch('/api/news', {
-        method: 'POST',
+      const isEditing = editingArticle !== null;
+      const url = isEditing ? '/api/news' : '/api/news';
+      const method = isEditing ? 'PUT' : 'POST';
+      
+      const requestBody = isEditing 
+        ? { id: editingArticle.id, ...formData, links: filteredLinks }
+        : { ...formData, links: filteredLinks };
+      
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          links: filteredLinks
-        })
+        body: JSON.stringify(requestBody)
       });
       
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to save article');
+        throw new Error(errorData.error || `Failed to ${isEditing ? 'update' : 'create'} article`);
       }
       
-      setMessage('Article saved successfully');
+      setMessage(`Article ${isEditing ? 'updated' : 'created'} successfully`);
       setFormData({
         title: '',
         content: '',
@@ -180,6 +186,150 @@ export default function AdminNewsPage() {
         <div className="success-message">
           {message}
           <button onClick={() => setMessage('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
+        </div>
+      )}
+
+      {/* Edit Form */}
+      {editingArticle && (
+        <div className="admin-form">
+          <h2>{editingArticle ? 'Edit Article' : 'Add New Article'}</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Title</label>
+              <input 
+                value={formData.title} 
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+                required 
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Excerpt (Short Description)</label>
+              <textarea 
+                rows={3} 
+                value={formData.excerpt} 
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} 
+                required 
+                maxLength={200}
+              />
+              <small>{formData.excerpt.length}/200 characters</small>
+            </div>
+            
+            <div className="form-group">
+              <label>Content</label>
+              <RichTextEditor
+                value={formData.content}
+                onChange={(value) => setFormData({ ...formData, content: value })}
+                placeholder="Write your article content here..."
+                height="400px"
+              />
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Author</label>
+                <input 
+                  value={formData.author} 
+                  onChange={(e) => setFormData({ ...formData, author: e.target.value })} 
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <label>Category</label>
+                <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}>
+                  <option value="GENERAL">General</option>
+                  <option value="RELEASES">New Releases</option>
+                  <option value="EVENTS">Events</option>
+                  <option value="INTERVIEWS">Interviews</option>
+                  <option value="INDUSTRY">Industry News</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <ImageUpload
+                onImageUpload={(url) => setFormData({ ...formData, image: url })}
+                currentImage={formData.image}
+                folder="news"
+                label="Article Image"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>
+                <input 
+                  type="checkbox" 
+                  checked={formData.featured} 
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })} 
+                />
+                Featured Article
+              </label>
+            </div>
+            
+            <div className="form-group">
+              <label>Links (Optional)</label>
+              {formData.links.map((link, index) => (
+                <div key={index} className="link-input-group">
+                  <input
+                    type="text"
+                    placeholder="Link text"
+                    value={link.text}
+                    onChange={(e) => updateLink(index, 'text', e.target.value)}
+                  />
+                  <input
+                    type="url"
+                    placeholder="URL"
+                    value={link.url}
+                    onChange={(e) => updateLink(index, 'url', e.target.value)}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => removeLink(index)}
+                    className="btn btn-small"
+                    style={{ background: '#ff4444', color: 'white' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button 
+                type="button" 
+                onClick={addLink}
+                className="btn btn-outline"
+                style={{ marginTop: '0.5rem' }}
+              >
+                Add Link
+              </button>
+            </div>
+            
+            <div className="form-actions">
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+              >
+                {editingArticle ? 'Update Article' : 'Create Article'}
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline"
+                onClick={() => {
+                  setEditingArticle(null);
+                  setFormData({
+                    title: '',
+                    content: '',
+                    image: '',
+                    excerpt: '',
+                    author: '',
+                    category: 'GENERAL',
+                    featured: false,
+                    links: [{ text: '', url: '' }]
+                  });
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
