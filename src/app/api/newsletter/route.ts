@@ -138,7 +138,7 @@ export async function PUT(request: NextRequest) {
 }
 
 async function sendWelcomeEmail(email: string) {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
@@ -188,7 +188,7 @@ async function sendWelcomeEmail(email: string) {
 }
 
 async function sendNewsletterToSubscribers(subscribers: any[], article: any, subject: string, content: string) {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
