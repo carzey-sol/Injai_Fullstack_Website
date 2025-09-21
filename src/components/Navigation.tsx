@@ -7,7 +7,6 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
@@ -18,14 +17,6 @@ export default function Navigation() {
   const handleLogout = async () => {
     await logout();
     setIsMenuOpen(false);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      // Navigate to search results or implement search functionality
-      window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-    }
   };
 
   const navLinks = [
@@ -63,22 +54,6 @@ export default function Navigation() {
           
           {/* Auth links hidden on public site as requested */}
         </ul>
-        
-        {/* Search Bar */}
-        <div className="nav-search">
-          <form onSubmit={handleSearch} className="search-form">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-            <button type="submit" className="search-btn">
-              🔍
-            </button>
-          </form>
-        </div>
         
         <div className="hamburger" onClick={toggleMenu}>
           <span className={`bar ${isMenuOpen ? 'active' : ''}`}></span>

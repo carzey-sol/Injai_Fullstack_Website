@@ -135,32 +135,27 @@ export default function NewsPage() {
               {(() => {
                 const featured = filteredArticles.find(article => article.featured) || filteredArticles[0];
                 return (
-                  <div className="featured-content">
-                    <div className="featured-image">
-                      <Image
-                        src={featured.image}
-                        alt={featured.title}
-                        width={600}
-                        height={400}
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div className="featured-text">
-                      <div className="article-meta">
-                        <span className="article-category">{featured.category}</span>
-                        <span className="article-date">{formatDate(featured.publishedAt)}</span>
+                  <Link href={`/news/${featured.id}`} className="featured-article-link">
+                    <div className="featured-content">
+                      <div className="featured-image">
+                        <Image
+                          src={featured.image}
+                          alt={featured.title}
+                          width={600}
+                          height={400}
+                          style={{ objectFit: 'cover' }}
+                        />
                       </div>
-                      <h3>{featured.title}</h3>
-                      <p>{featured.excerpt}</p>
-                      <div className="article-links">
-                        {featured.links?.map((link, index) => (
-                          <Link key={index} href={link.url} className="btn btn-outline" target="_blank">
-                            {link.text}
-                          </Link>
-                        ))}
+                      <div className="featured-text">
+                        <div className="article-meta">
+                          <span className="article-category">{featured.category}</span>
+                          <span className="article-date">{formatDate(featured.publishedAt)}</span>
+                        </div>
+                        <h3>{featured.title}</h3>
+                        <p>{featured.excerpt}</p>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })()}
             </div>
@@ -176,34 +171,38 @@ export default function NewsPage() {
             {filteredArticles.length > 0 ? (
               filteredArticles.map((article) => (
                 <article key={article.id} className="news-card">
-                  <div className="news-image">
-                    <Image
-                      src={article.image}
-                      alt={article.title}
-                      width={400}
-                      height={250}
-                      style={{ objectFit: 'cover' }}
-                    />
-                    {article.featured && <span className="featured-badge">Featured</span>}
-                  </div>
-                  <div className="news-content">
-                    <div className="article-meta">
-                      <span className="article-category">{article.category}</span>
-                      <span className="article-date">{formatDate(article.publishedAt)}</span>
+                  <Link href={`/news/${article.id}`} className="news-card-link">
+                    <div className="news-image">
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        width={400}
+                        height={250}
+                        style={{ objectFit: 'cover' }}
+                      />
+                      {article.featured && <span className="featured-badge">Featured</span>}
                     </div>
-                    <h3>{article.title}</h3>
-                    <p>{article.excerpt}</p>
-                    <div className="article-author">
-                      <span>By {article.author}</span>
+                    <div className="news-content">
+                      <div className="article-meta">
+                        <span className="article-category">{article.category}</span>
+                        <span className="article-date">{formatDate(article.publishedAt)}</span>
+                      </div>
+                      <h3>{article.title}</h3>
+                      <p>{article.excerpt}</p>
+                      <div className="article-author">
+                        <span>By {article.author}</span>
+                      </div>
                     </div>
+                  </Link>
+                  {article.links && article.links.length > 0 && (
                     <div className="article-links">
-                      {article.links?.map((link, index) => (
-                        <Link key={index} href={link.url} className="btn btn-small" target="_blank">
+                      {article.links.map((link, index) => (
+                        <Link key={index} href={link.url} className="btn btn-small" target="_blank" onClick={(e) => e.stopPropagation()}>
                           {link.text}
                         </Link>
                       ))}
                     </div>
-                  </div>
+                  )}
                 </article>
               ))
             ) : (
