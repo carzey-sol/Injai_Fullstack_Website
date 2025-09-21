@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import SearchBar from '@/components/SearchBar';
+import FilterButtons from '@/components/FilterButtons';
+import PageHero from '@/components/PageHero';
 
 interface NewsArticle {
   id: string;
@@ -100,15 +103,21 @@ export default function NewsPage() {
     );
   }
 
+  const categoryOptions = [
+    { value: 'all', label: 'All News' },
+    { value: 'RELEASES', label: 'New Releases' },
+    { value: 'EVENTS', label: 'Events' },
+    { value: 'INTERVIEWS', label: 'Interviews' },
+    { value: 'INDUSTRY', label: 'Industry News' }
+  ];
+
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
       {/* Hero Section */}
-      <section className="page-hero">
-        <div className="container">
-          <h1 className="page-title">News & Updates</h1>
-          <p className="page-subtitle">Latest from the Guigui Rap Scene</p>
-        </div>
-      </section>
+      <PageHero 
+        title="News & Updates" 
+        subtitle="Latest from the Guigui Rap Scene"
+      />
 
       {/* Search and Filter Section */}
       <section className="filter-section">
@@ -119,57 +128,16 @@ export default function NewsPage() {
             gap: '1.5rem',
             alignItems: 'center'
           }}>
-            {/* Search Input */}
-            <div style={{ width: '100%', maxWidth: '500px' }}>
-              <input
-                type="text"
-                placeholder="Search news articles..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-            </div>
-            
-            {/* Filter Buttons */}
-            <div className="filter-buttons">
-              <button
-                className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('all')}
-              >
-                All News
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'RELEASES' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('RELEASES')}
-              >
-                New Releases
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'EVENTS' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('EVENTS')}
-              >
-                Events
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'INTERVIEWS' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('INTERVIEWS')}
-              >
-                Interviews
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'INDUSTRY' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('INDUSTRY')}
-              >
-                Industry News
-              </button>
-            </div>
+            <SearchBar
+              placeholder="Search news articles..."
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+            <FilterButtons
+              options={categoryOptions}
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+            />
           </div>
         </div>
       </section>

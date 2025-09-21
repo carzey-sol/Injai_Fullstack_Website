@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import SearchBar from '@/components/SearchBar';
+import FilterButtons from '@/components/FilterButtons';
+import PageHero from '@/components/PageHero';
 
 interface PlaylistItem { title: string; thumbnail: string; youtubeId: string }
 interface FeaturedPlaylist { title?: string; description?: string; playlistUrl?: string; items?: PlaylistItem[] }
@@ -112,59 +115,36 @@ export default function VideosPage() {
     );
   }
 
+  const categoryOptions = [
+    { value: 'all', label: 'All Videos' },
+    { value: 'music-videos', label: 'Music Videos' },
+    { value: 'interviews', label: 'Interviews' },
+    { value: 'live', label: 'Live Performances' },
+    { value: 'behind-scenes', label: 'Behind the Scenes' }
+  ];
+
   return (
     <>
       {/* Hero Section */}
-      <section className="page-hero">
-        <div className="container">
-          <h1 className="page-title">Video Gallery</h1>
-          <p className="page-subtitle">Latest Guigui Rap Content</p>
-        </div>
-      </section>
+      <PageHero 
+        title="Video Gallery" 
+        subtitle="Latest Guigui Rap Content"
+      />
 
       {/* Search and Filter Section */}
       <section className="search-section">
         <div className="container">
           <div className="search-container">
-            <input
-              type="text"
+            <SearchBar
               placeholder="Search videos..."
-              className="search-input"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={setSearchTerm}
             />
-            <div className="filter-buttons">
-              <button
-                className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('all')}
-              >
-                All Videos
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'music-videos' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('music-videos')}
-              >
-                Music Videos
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'interviews' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('interviews')}
-              >
-                Interviews
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'live' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('live')}
-              >
-                Live Performances
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'behind-scenes' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('behind-scenes')}
-              >
-                Behind the Scenes
-              </button>
-            </div>
+            <FilterButtons
+              options={categoryOptions}
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+            />
             <div className="filter-dropdowns">
               <select
                 className="filter-select"

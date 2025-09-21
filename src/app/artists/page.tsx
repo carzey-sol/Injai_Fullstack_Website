@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import SearchBar from '@/components/SearchBar';
+import FilterButtons from '@/components/FilterButtons';
+import PageHero from '@/components/PageHero';
 
 interface Artist {
   _id: string;
@@ -87,15 +90,20 @@ export default function ArtistsPage() {
     );
   }
 
+  const categoryOptions = [
+    { value: 'all', label: 'All Artists' },
+    { value: 'pioneers', label: 'Top 10 Now' },
+    { value: 'collaborators', label: 'Highlights' },
+    { value: 'emerging', label: 'New Releases' }
+  ];
+
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
       {/* Hero Section */}
-      <section className="page-hero">
-        <div className="container">
-          <h1 className="page-title">Featured Artists</h1>
-          <p className="page-subtitle">Meet the Voices of Guigui Rap</p>
-        </div>
-      </section>
+      <PageHero 
+        title="Featured Artists" 
+        subtitle="Meet the Voices of Guigui Rap"
+      />
 
       {/* Search and Filter Section */}
       <section style={{ padding: '2rem 0', background: 'var(--light-gray)' }}>
@@ -106,56 +114,16 @@ export default function ArtistsPage() {
             gap: '1.5rem',
             alignItems: 'center'
           }}>
-            {/* Search Input */}
-            <div style={{ width: '100%', maxWidth: '500px' }}>
-              <input
-                type="text"
-                placeholder="Search artists..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-            </div>
-            
-            {/* Filter Buttons */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              gap: '1rem', 
-              flexWrap: 'wrap' 
-            }}>
-              <button 
-                className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setFilter('all')}
-              >
-                All Artists
-              </button>
-              <button 
-                className={`btn ${filter === 'pioneers' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setFilter('pioneers')}
-              >
-                Top 10 Now
-              </button>
-              <button 
-                className={`btn ${filter === 'collaborators' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setFilter('collaborators')}
-              >
-                Highlights
-              </button>
-              <button 
-                className={`btn ${filter === 'emerging' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setFilter('emerging')}
-              >
-                New Releases
-              </button>
-            </div>
+            <SearchBar
+              placeholder="Search artists..."
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+            <FilterButtons
+              options={categoryOptions}
+              activeFilter={filter}
+              onFilterChange={setFilter}
+            />
           </div>
         </div>
       </section>

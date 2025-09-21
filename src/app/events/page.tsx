@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import SearchBar from '@/components/SearchBar';
+import FilterButtons from '@/components/FilterButtons';
+import PageHero from '@/components/PageHero';
 
 interface Event {
   id: string;
@@ -95,15 +98,21 @@ export default function EventsPage() {
     );
   }
 
+  const categoryOptions = [
+    { value: 'all', label: 'All Events' },
+    { value: 'concert', label: 'Concerts' },
+    { value: 'festival', label: 'Festivals' },
+    { value: 'workshop', label: 'Workshops' },
+    { value: 'meet-greet', label: 'Meet & Greet' }
+  ];
+
   return (
     <>
       {/* Hero Section */}
-      <section className="page-hero">
-        <div className="container">
-          <h1 className="page-title">Events</h1>
-          <p className="page-subtitle">Live Guigui Rap Experiences</p>
-        </div>
-      </section>
+      <PageHero 
+        title="Events" 
+        subtitle="Live Guigui Rap Experiences"
+      />
 
       {/* Search and Filter Section */}
       <section className="filter-section">
@@ -114,57 +123,16 @@ export default function EventsPage() {
             gap: '1.5rem',
             alignItems: 'center'
           }}>
-            {/* Search Input */}
-            <div style={{ width: '100%', maxWidth: '500px' }}>
-              <input
-                type="text"
-                placeholder="Search events..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-            </div>
-            
-            {/* Filter Buttons */}
-            <div className="filter-buttons">
-              <button
-                className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('all')}
-              >
-                All Events
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'concert' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('concert')}
-              >
-                Concerts
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'festival' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('festival')}
-              >
-                Festivals
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'workshop' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('workshop')}
-              >
-                Workshops
-              </button>
-              <button
-                className={`filter-btn ${activeFilter === 'meet-greet' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('meet-greet')}
-              >
-                Meet & Greet
-              </button>
-            </div>
+            <SearchBar
+              placeholder="Search events..."
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+            <FilterButtons
+              options={categoryOptions}
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+            />
           </div>
         </div>
       </section>
