@@ -24,6 +24,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchEvents();
@@ -31,7 +32,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     filterEvents();
-  }, [events, activeFilter]);
+  }, [events, activeFilter, searchTerm]);
 
   const fetchEvents = async () => {
     try {
@@ -51,6 +52,16 @@ export default function EventsPage() {
   const filterEvents = () => {
     let filtered = events;
 
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(event =>
+        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Type filter
     if (activeFilter !== 'all') {
       filtered = filtered.filter(event => event.type === activeFilter);
     }
@@ -94,40 +105,66 @@ export default function EventsPage() {
         </div>
       </section>
 
-      {/* Filter Section */}
+      {/* Search and Filter Section */}
       <section className="filter-section">
         <div className="container">
-          <div className="filter-buttons">
-            <button
-              className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('all')}
-            >
-              All Events
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'concert' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('concert')}
-            >
-              Concerts
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'festival' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('festival')}
-            >
-              Festivals
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'workshop' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('workshop')}
-            >
-              Workshops
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'meet-greet' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('meet-greet')}
-            >
-              Meet & Greet
-            </button>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: '1.5rem',
+            alignItems: 'center'
+          }}>
+            {/* Search Input */}
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <input
+                type="text"
+                placeholder="Search events..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+              />
+            </div>
+            
+            {/* Filter Buttons */}
+            <div className="filter-buttons">
+              <button
+                className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('all')}
+              >
+                All Events
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'concert' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('concert')}
+              >
+                Concerts
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'festival' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('festival')}
+              >
+                Festivals
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'workshop' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('workshop')}
+              >
+                Workshops
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'meet-greet' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('meet-greet')}
+              >
+                Meet & Greet
+              </button>
+            </div>
           </div>
         </div>
       </section>

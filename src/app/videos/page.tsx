@@ -9,7 +9,7 @@ interface FeaturedPlaylist { title?: string; description?: string; playlistUrl?:
 interface Video {
   id: string;
   title: string;
-  artist: string;
+  artist: string | { name: string; _id: string };
   description: string;
   youtubeId: string;
   category: string;
@@ -58,11 +58,12 @@ export default function VideosPage() {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(video =>
-        video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        video.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        video.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      filtered = filtered.filter(video => {
+        const artistName = typeof video.artist === 'string' ? video.artist : video.artist?.name || '';
+        return video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               artistName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               video.description.toLowerCase().includes(searchTerm.toLowerCase());
+      });
     }
 
     // Category filter
@@ -77,7 +78,10 @@ export default function VideosPage() {
 
     // Artist filter
     if (artistFilter !== 'all') {
-      filtered = filtered.filter(video => video.artist.toLowerCase().includes(artistFilter.toLowerCase()));
+      filtered = filtered.filter(video => {
+        const artistName = typeof video.artist === 'string' ? video.artist : video.artist?.name || '';
+        return artistName.toLowerCase().includes(artistFilter.toLowerCase());
+      });
     }
 
     setFilteredVideos(filtered);

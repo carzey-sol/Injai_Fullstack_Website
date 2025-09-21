@@ -22,13 +22,19 @@ interface NewsArticle {
 
 export default function NewsPage() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchNews();
   }, []);
+
+  useEffect(() => {
+    filterArticles();
+  }, [articles, searchTerm, activeFilter]);
 
   const fetchNews = async () => {
     try {
@@ -54,9 +60,25 @@ export default function NewsPage() {
     });
   };
 
-  const filteredArticles = activeFilter === 'all' 
-    ? articles 
-    : articles.filter(article => article.category === activeFilter);
+  const filterArticles = () => {
+    let filtered = articles;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(article =>
+        article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.author.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter(article => article.category === activeFilter);
+    }
+
+    setFilteredArticles(filtered);
+  };
 
   if (loading) {
     return (
@@ -88,40 +110,66 @@ export default function NewsPage() {
         </div>
       </section>
 
-      {/* Filter Section */}
+      {/* Search and Filter Section */}
       <section className="filter-section">
         <div className="container">
-          <div className="filter-buttons">
-            <button
-              className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('all')}
-            >
-              All News
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'releases' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('releases')}
-            >
-              New Releases
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'events' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('events')}
-            >
-              Events
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'interviews' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('interviews')}
-            >
-              Interviews
-            </button>
-            <button
-              className={`filter-btn ${activeFilter === 'industry' ? 'active' : ''}`}
-              onClick={() => setActiveFilter('industry')}
-            >
-              Industry News
-            </button>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: '1.5rem',
+            alignItems: 'center'
+          }}>
+            {/* Search Input */}
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <input
+                type="text"
+                placeholder="Search news articles..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+              />
+            </div>
+            
+            {/* Filter Buttons */}
+            <div className="filter-buttons">
+              <button
+                className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('all')}
+              >
+                All News
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'RELEASES' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('RELEASES')}
+              >
+                New Releases
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'EVENTS' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('EVENTS')}
+              >
+                Events
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'INTERVIEWS' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('INTERVIEWS')}
+              >
+                Interviews
+              </button>
+              <button
+                className={`filter-btn ${activeFilter === 'INDUSTRY' ? 'active' : ''}`}
+                onClick={() => setActiveFilter('INDUSTRY')}
+              >
+                Industry News
+              </button>
+            </div>
           </div>
         </div>
       </section>

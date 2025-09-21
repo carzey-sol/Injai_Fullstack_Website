@@ -19,13 +19,19 @@ interface Artist {
 
 export default function ArtistsPage() {
   const [artists, setArtists] = useState<Artist[]>([]);
+  const [filteredArtists, setFilteredArtists] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchArtists();
   }, []);
+
+  useEffect(() => {
+    filterArtists();
+  }, [artists, searchTerm, filter]);
 
   const fetchArtists = async () => {
     try {
@@ -42,9 +48,24 @@ export default function ArtistsPage() {
     }
   };
 
-  const filteredArtists = filter === 'all' 
-    ? artists 
-    : artists.filter(artist => artist.category === filter);
+  const filterArtists = () => {
+    let filtered = artists;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(artist =>
+        artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        artist.bio.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (filter !== 'all') {
+      filtered = filtered.filter(artist => artist.category === filter);
+    }
+
+    setFilteredArtists(filtered);
+  };
 
   if (loading) {
     return (
@@ -76,39 +97,65 @@ export default function ArtistsPage() {
         </div>
       </section>
 
-      {/* Filter Section */}
+      {/* Search and Filter Section */}
       <section style={{ padding: '2rem 0', background: 'var(--light-gray)' }}>
         <div className="container">
           <div style={{ 
             display: 'flex', 
-            justifyContent: 'center', 
-            gap: '1rem', 
-            flexWrap: 'wrap' 
+            flexDirection: 'column',
+            gap: '1.5rem',
+            alignItems: 'center'
           }}>
-            <button 
-              className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('all')}
-            >
-              All Artists
-            </button>
-            <button 
-              className={`btn ${filter === 'pioneers' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('pioneers')}
-            >
-              Top 10 Now
-            </button>
-            <button 
-              className={`btn ${filter === 'collaborators' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('collaborators')}
-            >
-              Highlights
-            </button>
-            <button 
-              className={`btn ${filter === 'emerging' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('emerging')}
-            >
-              New Releases
-            </button>
+            {/* Search Input */}
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <input
+                type="text"
+                placeholder="Search artists..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+              />
+            </div>
+            
+            {/* Filter Buttons */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: '1rem', 
+              flexWrap: 'wrap' 
+            }}>
+              <button 
+                className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setFilter('all')}
+              >
+                All Artists
+              </button>
+              <button 
+                className={`btn ${filter === 'pioneers' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setFilter('pioneers')}
+              >
+                Top 10 Now
+              </button>
+              <button 
+                className={`btn ${filter === 'collaborators' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setFilter('collaborators')}
+              >
+                Highlights
+              </button>
+              <button 
+                className={`btn ${filter === 'emerging' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setFilter('emerging')}
+              >
+                New Releases
+              </button>
+            </div>
           </div>
         </div>
       </section>
