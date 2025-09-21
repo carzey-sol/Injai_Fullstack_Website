@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ImageUpload from '@/components/admin/ImageUpload';
+import ImageUpload from '@/components/ImageUpload';
 
 interface NewsArticle {
   id: string;
@@ -13,7 +13,7 @@ interface NewsArticle {
   excerpt: string;
   author: string;
   publishedAt: string;
-  category: string;
+  category: 'GENERAL' | 'RELEASES' | 'EVENTS' | 'INTERVIEWS' | 'INDUSTRY';
   featured: boolean;
   links: {
     text: string;
@@ -35,7 +35,7 @@ export default function AdminNewsPage() {
     image: '',
     excerpt: '',
     author: '',
-    category: 'general' as 'releases' | 'events' | 'interviews' | 'industry' | 'general',
+    category: 'GENERAL' as 'GENERAL' | 'RELEASES' | 'EVENTS' | 'INTERVIEWS' | 'INDUSTRY',
     featured: false,
     links: [{ text: '', url: '' }]
   });
@@ -124,7 +124,7 @@ export default function AdminNewsPage() {
         image: '',
         excerpt: '',
         author: '',
-        category: 'general',
+        category: 'GENERAL',
         featured: false,
         links: [{ text: '', url: '' }]
       });

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ImageUpload from '@/components/admin/ImageUpload';
+import ImageUpload from '@/components/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function NewNewsPage() {
@@ -17,7 +17,7 @@ export default function NewNewsPage() {
   const [image, setImage] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [author, setAuthor] = useState('');
-  const [category, setCategory] = useState('general');
+  const [category, setCategory] = useState('GENERAL');
   const [featured, setFeatured] = useState(false);
   const [links, setLinks] = useState([{ text: '', url: '' }]);
 

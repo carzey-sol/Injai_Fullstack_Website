@@ -12,7 +12,7 @@ interface NewsArticle {
   excerpt: string;
   author: string;
   publishedAt: string;
-  category: string;
+  category: 'GENERAL' | 'RELEASES' | 'EVENTS' | 'INTERVIEWS' | 'INDUSTRY';
   featured: boolean;
   links?: {
     text: string;
